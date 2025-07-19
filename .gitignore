@@ -1,0 +1,34 @@
+# Node
+node_modules/
+
+# HBuilderX/uni-app 相关
+unpackage/
+dist/
+.DS_Store
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# VSCode
+.vscode/
+
+# Mac 系统文件
+.DS_Store
+
+# 其他常见忽略
+.idea/
+*.iml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 生产构建输出
+/build/
+/output/
+
+# 依赖锁文件（如不希望锁定可取消注释）
+# package-lock.json
+# yarn.lock 
+uni_modules/ 
