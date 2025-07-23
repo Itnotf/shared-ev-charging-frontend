@@ -1,15 +1,7 @@
-// 开发环境
-const DEV = {
-  baseUrl: 'http://localhost:8080/api'
-};
-
-// 生产环境
-const PROD = {
-  baseUrl: 'https://api.example.com/api'
-};
-
-// 根据环境导出配置
-export const { baseUrl } = process.env.NODE_ENV === 'development' ? DEV : PROD;
+// 使用环境变量配置
+export const baseUrl = process.env.NODE_ENV === 'development' 
+  ? process.env.VUE_APP_BASE_URL_DEV 
+  : process.env.VUE_APP_BASE_URL_PROD;
 
 // 常量配置
 export const TIMESLOTS = {

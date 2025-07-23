@@ -32,3 +32,4 @@ yarn-error.log*
 # package-lock.json
 # yarn.lock 
 uni_modules/ 
+.env
