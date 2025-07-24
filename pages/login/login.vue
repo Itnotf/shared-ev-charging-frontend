@@ -7,8 +7,8 @@
 			</view>
 			<button
 				class="login-btn"
-				open-type="getPhoneNumber"
-				@getphonenumber="onGetPhoneNumber"
+				open-type="login"
+				@tap="onWeixinLogin"
 				:loading="loginLoading"
 				:disabled="loginLoading"
 			>
@@ -48,24 +48,35 @@ export default {
 		}
 	},
 	methods: {
-		async onGetPhoneNumber(e) {
+		async onWeixinLogin() {
 			if (!this.checkAgreement()) return;
-			if (!e.detail || !e.detail.code) {
-				uni.showToast({ title: '获取手机号失败', icon: 'none' });
-				return;
-			}
 			if (this.loginLoading) return;
 			this.loginLoading = true;
 			uni.showLoading({ title: '登录中' });
 			try {
+				// 1. 微信登录凭证
 				const loginRes = await new Promise((resolve, reject) => {
-					uni.login({ provider: 'weixin', success: resolve, fail: reject });
+					uni.login({
+						provider: 'weixin',
+						success: (res) => {
+							console.log('【登录调试】uni.login 成功:', res);
+							resolve(res);
+						},
+						fail: (err) => {
+							console.log('【登录调试】uni.login 失败:', err);
+							reject(err);
+						}
+					});
 				});
-				const authRes = await wxLogin({
-					code: loginRes.code,
-					phoneCode: e.detail.code
-				});
+				if (!loginRes.code) {
+					console.log('【登录调试】未获取到微信登录凭证:', loginRes);
+					throw new Error('未获取到微信登录凭证');
+				}
+				// 2. 调用后端登录接口
+				const authRes = await wxLogin({ code: loginRes.code });
+				console.log('【登录调试】wxLogin 返回:', authRes);
 				if (!authRes || !authRes.data || !authRes.data.token || !authRes.data.user_info) {
+					console.log('【登录调试】wxLogin 返回数据不完整:', authRes);
 					throw { code: 'NO_TOKEN' };
 				}
 				const token = authRes.data.token;
@@ -73,11 +84,10 @@ export default {
 				userAuth.save(token, userInfo);
 				goTo('/pages/index/index');
 			} catch (error) {
+				console.log('【登录调试】catch 捕获到异常:', error);
 				let msg = '登录失败，请重试';
 				if (error && error.code) {
 					if (error.code === 'NO_TOKEN') msg = '登录失败，未获取到用户信息';
-					else if (error.code === 'INVALID_PHONE') msg = '手机号无效';
-					// 可根据后端返回的错误码细分更多提示
 				}
 				uni.showToast({ title: msg, icon: 'none' });
 			} finally {

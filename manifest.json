@@ -42,11 +42,12 @@
     },
     "quickapp" : {},
     "mp-weixin" : {
-        "appid" : "wx385805300a599156",
+        "appid" : "wxd5cf71db7cb627ef",
         "setting" : {
             "urlCheck" : false
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {}
     },
     "mp-alipay" : {
         "usingComponents" : true

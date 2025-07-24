@@ -1,7 +1,8 @@
-// 使用环境变量配置
-export const baseUrl = process.env.NODE_ENV === 'development' 
-  ? process.env.VUE_APP_BASE_URL_DEV 
-  : process.env.VUE_APP_BASE_URL_PROD;
+// 兼容小程序环境的环境变量写法
+const env = import.meta.env.MODE;
+export const baseUrl = env === 'development'
+  ? import.meta.env.VITE_APP_BASE_URL_DEV
+  : import.meta.env.VITE_APP_BASE_URL_PROD;
 
 // 常量配置
 export const TIMESLOTS = {
@@ -13,4 +14,4 @@ export const TIMESLOTS = {
     name: '晚上',
     time: '20:00 - 08:00'
   }
-}; 
+};
