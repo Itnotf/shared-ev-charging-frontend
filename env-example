@@ -1,9 +1,0 @@
-# 环境模式
-# development 或 production
-NODE_ENV=development
-
-# 开发环境的基础URL
-VITE_APP_BASE_URL_DEV=http://localhost:8080/api
-
-# 生产环境的基础URL
-VITE_APP_BASE_URL_PROD=https://api.example.com/api

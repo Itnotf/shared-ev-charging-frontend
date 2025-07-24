@@ -1,8 +1,13 @@
-// 兼容小程序环境的环境变量写法
-const env = import.meta.env.MODE;
-export const baseUrl = env === 'development'
-  ? import.meta.env.VITE_APP_BASE_URL_DEV
-  : import.meta.env.VITE_APP_BASE_URL_PROD;
+const config = {
+  development: {
+    baseURL: 'http://localhost:8080/api'
+  },
+  production: {
+    baseURL: 'http://192.168.31.111:8081/api'
+  }
+};
+
+export const baseUrl = config[process.env.NODE_ENV].baseURL
 
 // 常量配置
 export const TIMESLOTS = {
