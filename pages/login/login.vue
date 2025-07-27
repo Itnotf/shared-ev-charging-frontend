@@ -15,18 +15,18 @@
 				<uni-icons type="weixin" size="24" color="#fff"></uni-icons>
 				<text>微信一键登录</text>
 			</button>
-		</view>
-		<view class="agreement-area">
-			<view class="agreement">
-				<checkbox-group @change="onAgreeChange">
-					<checkbox value="agree" color="$primary" />
-				</checkbox-group>
-				<text class="agreement-text">
-					登录即表示同意
-					<text class="link" @click="goTo('/pages/profile/agreement')">《用户协议》</text>
-					和
-					<text class="link" @click="goTo('/pages/profile/privacy')">《隐私政策》</text>
-				</text>
+			<view class="agreement-area">
+				<view class="agreement">
+					<checkbox-group @change="onAgreeChange">
+						<checkbox value="agree" color="$primary" />
+					</checkbox-group>
+					<text class="agreement-text">
+						登录即表示同意
+						<text class="link" @click="goTo('/pages/profile/agreement')">《用户协议》</text>
+						和
+						<text class="link" @click="goTo('/pages/profile/privacy')">《隐私政策》</text>
+					</text>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -122,15 +122,13 @@ export default {
 	box-sizing: border-box;
 	align-items: center;
 	padding: 0 40rpx;
-	justify-content: space-between;
+	justify-content: center;
 }
 
 .center-area {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	flex: 1;
-	justify-content: center;
 	width: 100%;
 }
 
@@ -157,12 +155,11 @@ export default {
 .login-btn {
 	@extend .btn;
 	width: 100%;
-	margin-bottom: 30rpx;
+	margin-bottom: 20rpx;
 }
 
 .agreement-area {
 	width: 100%;
-	margin-bottom: 40rpx;
 	display: flex;
 	justify-content: center;
 }

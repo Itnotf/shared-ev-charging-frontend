@@ -126,7 +126,6 @@ export default {
   height: 120rpx;
   border-radius: 50%;
   object-fit: cover;
-  border: 4rpx solid #FFA500;
 }
 .avatar-tip {
   font-size: 24rpx;
