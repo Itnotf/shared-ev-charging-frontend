@@ -1,9 +1,9 @@
 const config = {
   development: {
-    baseURL: 'http://localhost:8080/api'
+    baseURL: 'http://localhost:8080'
   },
   production: {
-    baseURL: 'https://shared-ev-charging-backend.itnotf.tech/api'
+    baseURL: 'https://shared-ev-charging-backend.itnotf.tech'
   }
 };
 

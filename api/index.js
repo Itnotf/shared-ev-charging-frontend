@@ -49,7 +49,7 @@ const refreshAuthToken = async () => {
     refreshTokenPromise = new Promise(async (resolve, reject) => {
       try {
         const res = await uni.request({
-          url: '/auth/refresh', // 只传相对路径，由拦截器统一拼接 baseUrl
+          url: '/api/auth/refresh', // 只传相对路径，由拦截器统一拼接 baseUrl
           method: 'POST',
           header: {
             'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export const http = (options) => {
 export const uploadFile = (filePath) => {
   return new Promise((resolve, reject) => {
     uni.uploadFile({
-      url: '/upload/image', // 只传相对路径，由拦截器统一拼接 baseUrl 和加 token
+      url: '/api/upload/image', // 只传相对路径，由拦截器统一拼接 baseUrl 和加 token
       filePath,
       name: 'file',
       success: (res) => {
@@ -159,7 +159,7 @@ export const uploadFile = (filePath) => {
 // 同步用户信息
 export const syncUserProfile = (userInfo) => {
   return http({
-    url: '/users/profile',
+    url: '/api/users/profile',
     method: 'POST',
     data: {
       avatarUrl: userInfo.avatarUrl,

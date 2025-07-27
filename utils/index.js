@@ -182,15 +182,15 @@ export const checkAndFetchUserProfile = async () => {
   // 检查用户信息是否存在且包含头像
   const hasAvatar = userInfo?.user_avatar || userInfo?.avatar;
   if (!userInfo || !hasAvatar || hasAvatar === '') {
-    uni.showModal({
-      title: '获取头像和昵称',
+      uni.showModal({
+        title: '获取头像和昵称',
       content: '为了提供更好的个性化体验，请完善您的头像和昵称。',
       confirmText: '去填写',
       showCancel: false,
-      success: (res) => {
-        if (res.confirm) {
+        success: (res) => {
+          if (res.confirm) {
           goTo('/pages/profile/fillUserInfo');
-        }
+                }
       }
     });
     return false;

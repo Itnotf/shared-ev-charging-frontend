@@ -37,7 +37,8 @@
 <script>
 import CommonNavBar from '@/components/CommonNavBar.vue';
 import { userAuth } from '@/utils/index';
-import { syncUserProfile } from '@/api';
+import { syncUserProfile, uploadFile } from '@/api';
+import { baseUrl } from '@/config';
 
 export default {
   components: { CommonNavBar },
@@ -62,8 +63,17 @@ export default {
     }
   },
   methods: {
-    onChooseAvatar(e) {
-      this.avatarUrl = e.detail.avatarUrl;
+    async onChooseAvatar(e) {
+      const tempFilePath = e.detail.avatarUrl;
+      if (!tempFilePath) return;
+      try {
+        const res = await uploadFile(tempFilePath);
+        // 拼接完整图片地址
+        const url = res.data.url;
+        this.avatarUrl = url.startsWith('http') ? url : baseUrl + url;
+      } catch (err) {
+        uni.showToast({ title: '头像上传失败', icon: 'none' });
+      }
     },
     async onSubmit() {
       if (!this.avatarUrl || !this.nickName) {

@@ -3,7 +3,7 @@ import { http } from './index';
 // 微信登录
 export const wxLogin = (data) => {
   return http({
-    url: '/auth/login',
+    url: '/api/auth/login',
     method: 'POST',
     data
   });
@@ -12,7 +12,7 @@ export const wxLogin = (data) => {
 // 获取用户信息
 export const getUserProfile = () => {
   return http({
-    url: '/users/profile',
+    url: '/api/users/profile',
     method: 'GET'
   });
 };
@@ -20,7 +20,7 @@ export const getUserProfile = () => {
 // 退出登录
 export const logout = () => {
   return http({
-    url: '/auth/logout',
+    url: '/api/auth/logout',
     method: 'POST'
   });
 };
@@ -28,7 +28,7 @@ export const logout = () => {
 // 获取用户电价
 export const getUserPrice = () => {
   return http({
-    url: '/users/price',
+    url: '/api/users/price',
     method: 'GET'
   });
 }; 
