@@ -7,7 +7,7 @@
 			<!-- 应用信息 -->
 			<view class="app-info">
 				<image src="/static/logo.png" mode="aspectFit" class="app-logo"></image>
-				<text class="app-name">馨澜美邻</text>
+				<text class="app-name">澜充小站</text>
 				<text class="app-version">v1.0.0</text>
 			</view>
 			

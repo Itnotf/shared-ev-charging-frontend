@@ -5,7 +5,7 @@
 		<!-- 内容区域 -->
 		<view class="content">
 			<!-- 协议标题 -->
-			<view class="agreement-title">馨澜美邻用户协议</view>
+			<view class="agreement-title">澜充小站用户协议</view>
 			<view class="agreement-date">更新日期：2025年07月18日</view>
 			
 			<!-- 协议内容 -->
@@ -13,7 +13,7 @@
 				<view class="section">
 					<view class="section-title">1. 协议的接受与修改</view>
 					<view class="section-content">
-						<view class="paragraph">1.1 本协议是您与馨澜美邻（以下简称"本小程序"）开发者之间关于使用本小程序服务所订立的协议。</view>
+						<view class="paragraph">1.1 本协议是您与澜充小站（以下简称"本小程序"）开发者之间关于使用本小程序服务所订立的协议。</view>
 						<view class="paragraph">1.2 您在注册成为本小程序用户前，应当认真阅读本协议，确保充分理解各条款内容。</view>
 						<view class="paragraph">1.3 您注册成功或使用本小程序服务，即视为您已阅读并同意本协议的全部条款。</view>
 						<view class="paragraph">1.4 本小程序有权在必要时修改本协议条款，协议条款一旦发生变动，将会在本小程序上公布，请您及时关注。</view>
@@ -23,7 +23,7 @@
 				<view class="section">
 					<view class="section-title">2. 服务内容与规范</view>
 					<view class="section-content">
-						<view class="paragraph">2.1 本小程序为用户提供馨澜美邻服务，包括但不限于充电预约、记录上传等功能。</view>
+						<view class="paragraph">2.1 本小程序为用户提供澜充小站服务，包括但不限于充电预约、记录上传等功能。</view>
 						<view class="paragraph">2.2 您在使用本小程序服务时，必须遵守中华人民共和国相关法律法规的规定，不得利用本服务从事违法违规行为。</view>
 						<view class="paragraph">2.3 您不得利用本小程序传播、发布违法信息，不得侵犯他人合法权益。</view>
 						<view class="paragraph">2.4 您应当保证提交的预约信息和充电记录的真实性和准确性，不得提交虚假信息。</view>

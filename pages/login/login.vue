@@ -3,7 +3,7 @@
 		<view class="center-area">
 			<view class="logo-area">
 				<image class="logo" src="/static/logo.png" mode="aspectFit"></image>
-				<text class="app-name">馨澜美邻</text>
+				<text class="app-name">澜充小站</text>
 			</view>
 			<button
 				class="login-btn"

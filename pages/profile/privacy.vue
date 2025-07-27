@@ -5,7 +5,7 @@
 		<!-- 内容区域 -->
 		<view class="content">
 			<!-- 政策标题 -->
-			<view class="privacy-title">馨澜美邻隐私政策</view>
+			<view class="privacy-title">澜充小站隐私政策</view>
 			<view class="privacy-date">更新日期：2025年07月18日</view>
 			
 			<!-- 政策内容 -->
@@ -13,14 +13,14 @@
 				<view class="section">
 					<view class="section-title">1. 引言</view>
 					<view class="section-content">
-						<view class="paragraph">馨澜美邻（以下简称"我们"）非常重视用户隐私保护，并严格遵守相关法律法规。本隐私政策旨在向您说明我们如何收集、使用、存储和保护您的个人信息，以及您享有的相关权利。请您在使用我们的服务前，仔细阅读并了解本隐私政策。</view>
+						<view class="paragraph">澜充小站（以下简称"我们"）非常重视用户隐私保护，并严格遵守相关法律法规。本隐私政策旨在向您说明我们如何收集、使用、存储和保护您的个人信息，以及您享有的相关权利。请您在使用我们的服务前，仔细阅读并了解本隐私政策。</view>
 					</view>
 				</view>
 				
 				<view class="section">
 					<view class="section-title">2. 信息收集</view>
 					<view class="section-content">
-						<view class="paragraph">2.1 为了向您提供馨澜美邻服务，我们可能收集以下信息：</view>
+						<view class="paragraph">2.1 为了向您提供澜充小站服务，我们可能收集以下信息：</view>
 						<view class="paragraph">（1）账号信息：包括您注册和使用小程序时提供的手机号码、微信账号等。</view>
 						<view class="paragraph">（2）设备信息：设备型号、操作系统、唯一设备标识符等信息。</view>
 						<view class="paragraph">（3）位置信息：在您同意的情况下，我们可能收集您的位置信息。</view>
