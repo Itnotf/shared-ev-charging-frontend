@@ -50,6 +50,7 @@ export default {
 		}
 	},
 	methods: {
+		goTo,
 		onAgreeChange(e) {
 			this.agreeProtocol = e.detail.value.includes('agree');
 		},
