@@ -182,41 +182,18 @@ export const checkAndFetchUserProfile = async () => {
   // 检查用户信息是否存在且包含头像
   const hasAvatar = userInfo?.user_avatar || userInfo?.avatar;
   if (!userInfo || !hasAvatar || hasAvatar === '') {
-    return new Promise((resolve) => {
-      uni.showModal({
-        title: '获取头像和昵称',
-        content: '为了提供更好的个性化体验，请授权获取您的头像和昵称。',
-        confirmText: '同意',
-        success: (res) => {
-          if (res.confirm) {
-            wx.getUserProfile({
-              desc: '用于完善用户资料',
-              success: async (res) => {
-                const profile = res.userInfo;
-                // 将头像和昵称发送到后端
-                await syncUserInfo({ avatarUrl: profile.avatarUrl, nickName: profile.nickName });
-                // 更新本地缓存
-                const stored = userAuth.get();
-                if (stored) {
-                  stored.userInfo.user_avatar = profile.avatarUrl;
-                  stored.userInfo.user_name = profile.nickName;
-                  userAuth.save(stored.token, stored.userInfo);
-                } else {
-                  uni.setStorageSync('userInfo', JSON.stringify({ user_avatar: profile.avatarUrl, user_name: profile.nickName }));
-                }
-                resolve(true);
-              },
-              fail: () => {
-                uni.showToast({ title: '获取头像和昵称失败', icon: 'none' });
-                resolve(false);
-              }
-            });
-          } else {
-            resolve(false);
-          }
+    uni.showModal({
+      title: '获取头像和昵称',
+      content: '为了提供更好的个性化体验，请完善您的头像和昵称。',
+      confirmText: '去填写',
+      showCancel: false,
+      success: (res) => {
+        if (res.confirm) {
+          goTo('/pages/profile/fillUserInfo');
         }
-      });
+      }
     });
+    return false;
   }
   return true;
 };

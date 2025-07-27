@@ -69,6 +69,13 @@
 				"navigationBarTitleText": "隐私政策",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/profile/fillUserInfo",
+			"style": {
+				"navigationBarTitleText": "完善头像昵称",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

@@ -3,7 +3,7 @@ const config = {
     baseURL: 'http://localhost:8080/api'
   },
   production: {
-    baseURL: 'http://192.168.31.111:8081/api'
+    baseURL: 'https://shared-ev-charging-backend.itnotf.tech/api'
   }
 };
 

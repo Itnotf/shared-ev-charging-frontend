@@ -5,7 +5,7 @@
 		
 		<!-- 头像卡片 -->
 		<view class="content">
-			<view class="profile-header">
+			<view class="profile-header" @click="goTo('/pages/profile/fillUserInfo')">
 				<image v-if="userInfo.avatar && userInfo.avatar !== '👤'" :src="userInfo.avatar" class="profile-avatar" />
 				<image v-else src="/static/icons/person.svg" class="profile-avatar" />
 				<view class="profile-info">

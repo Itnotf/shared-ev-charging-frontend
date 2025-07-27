@@ -18,7 +18,9 @@
 		</view>
 		<view class="agreement-area">
 			<view class="agreement">
-				<checkbox :checked="agreeProtocol" @change="agreeProtocol = $event.detail.value" color="$primary" />
+				<checkbox-group @change="onAgreeChange">
+					<checkbox value="agree" color="$primary" />
+				</checkbox-group>
 				<text class="agreement-text">
 					登录即表示同意
 					<text class="link" @click="goTo('/pages/profile/agreement')">《用户协议》</text>
@@ -37,7 +39,7 @@ import { userAuth, goTo } from '@/utils';
 export default {
 	data() {
 		return {
-			agreeProtocol: true,
+			agreeProtocol: false,
 			loginLoading: false
 		};
 	},
@@ -48,6 +50,9 @@ export default {
 		}
 	},
 	methods: {
+		onAgreeChange(e) {
+			this.agreeProtocol = e.detail.value.includes('agree');
+		},
 		async onWeixinLogin() {
 			if (!this.checkAgreement()) return;
 			if (this.loginLoading) return;
