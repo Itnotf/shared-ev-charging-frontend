@@ -14,14 +14,14 @@
 				</view>
 			</view>
 			<!-- 分组1 -->
-			<BaseGroup>
+			<!-- <BaseGroup>
 				<BaseGroupItem
 					icon="notification"
 					title="通知设置"
 					@click="goTo('/pages/profile/notification')"
 					rightIcon="right"
 				/>
-			</BaseGroup>
+			</BaseGroup> -->
 			<!-- 分组2 -->
 			<BaseGroup>
 				<BaseGroupItem
