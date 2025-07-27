@@ -424,7 +424,7 @@ export default {
 					goTo('/pages/index/index');
 				}, 1000);
 			} catch (error) {
-				if (error && error.data && error.data.code === 400 && error.data.message && error.data.message.indexOf('不能预约过去的日期') !== -1) {
+				if (error && error.data && error.data.message) {
 					uni.showModal({
 						title: '提示',
 						content: error.data.message,
