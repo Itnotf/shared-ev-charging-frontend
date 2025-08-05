@@ -2,7 +2,7 @@
 	<view class="container">
 		<CommonNavBar
 			title="预约充电"
-			:rightClick="rightClick"
+			:showBack="true"
 		/>
 		<view class="content">
 			<!-- 日历视图 -->

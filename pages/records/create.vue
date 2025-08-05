@@ -1,10 +1,16 @@
 <template>
 	<view class="container">
 		<!-- 导航栏 -->
-		<CommonNavBar title="上传记录" />
+		<CommonNavBar title="上传记录" :showBack="true" />
 		
 		<!-- 内容区域 -->
 		<view class="content">
+			<!-- 无预约ID时的提示 -->
+			<view v-if="!reservationId" class="no-reservation-warning">
+				<uni-icons type="info" size="22" color="#FF6B6B" style="margin-right: 8rpx;" />
+				<text class="warning-text">请先预约充电时段，然后才能上传记录</text>
+			</view>
+			
 			<!-- 补交预约信息美观展示 -->
 			<view v-if="reservationId || reservationDate || reservationTimeslot" class="supplement-reservation-info">
 				<uni-icons type="calendar" size="22" color="#FFA500" style="margin-right: 8rpx;" />
@@ -68,7 +74,7 @@
 			<button 
 				class="submit-btn"
 				@click="submitRecord"
-				:disabled="!kwh || parseFloat(kwh) <= 0"
+				:disabled="!reservationId || !kwh || parseFloat(kwh) <= 0"
 			>
 				<uni-icons type="wallet" size="20" color="#fff"></uni-icons>
 				<text class="btn-text">提交记录 ¥{{ cost }}</text>
@@ -209,6 +215,12 @@ export default {
 			}
 		},
 		async submitRecord() {
+			// 检查是否有预约ID
+			if (!this.reservationId) {
+				uni.showToast({ title: '请先预约充电时段', icon: 'none' });
+				return;
+			}
+			
 			if (!this.kwh || parseFloat(this.kwh) <= 0) {
 				uni.showToast({ title: '请输入有效的充电度数', icon: 'none' });
 				return;
@@ -264,7 +276,7 @@ export default {
 						title: '提示',
 						content: '暂无待上传的预约，去预约',
 						confirmText: '去预约',
-						showCancel: false,
+						showCancel: true,
 						success: (r) => {
 							if (r.confirm) goTo('/pages/reservations/index');
 						}
@@ -305,7 +317,7 @@ export default {
 					title: '提示',
 					content: '暂无待上传的预约，去预约',
 					confirmText: '去预约',
-					showCancel: false,
+					showCancel: true,
 					success: (r) => {
 						if (r.confirm) goTo('/pages/reservations/index');
 					}
@@ -559,5 +571,23 @@ export default {
   border-radius: 12rpx;
   font-size: 22rpx;
   vertical-align: middle;
+}
+
+.no-reservation-warning {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff2f0;
+	border: 1rpx solid #ffccc7;
+	border-radius: 12rpx;
+	margin: 30rpx 0 20rpx 0;
+	padding: 18rpx 30rpx;
+	font-size: 28rpx;
+	color: #FF6B6B;
+	box-shadow: 0 2rpx 8rpx rgba(255, 107, 107, 0.08);
+}
+
+.warning-text {
+	font-weight: 500;
 }
 </style> 

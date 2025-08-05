@@ -97,18 +97,6 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/reservations/index",
-				"iconPath": "static/tabbar/calendar.png",
-				"selectedIconPath": "static/tabbar/calendar-active.png",
-				"text": "预约"
-			},
-			{
-				"pagePath": "pages/records/create",
-				"iconPath": "static/tabbar/camera.png",
-				"selectedIconPath": "static/tabbar/camera-active.png",
-				"text": "上传"
-			},
-			{
 				"pagePath": "pages/profile/index",
 				"iconPath": "static/tabbar/user.png",
 				"selectedIconPath": "static/tabbar/user-active.png",

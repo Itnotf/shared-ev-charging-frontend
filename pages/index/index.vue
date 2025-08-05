@@ -99,10 +99,10 @@ export default {
 			pollingTimer: null,
 			// 宫格功能项配置，包含背景色和icon色
 			functionList: [
-				{ title: '预约充电', icon: 'calendar', bgColor: '#FFF7E6', iconColor: '#FFA500', onClick: () => goTo('/pages/reservations/index') },
-				{ title: '上传记录', icon: 'camera', bgColor: '#FFFBEA', iconColor: '#D46B08', onClick: () => goTo('/pages/records/create') },
-				{ title: '充电记录', icon: 'calendar', bgColor: '#FFF3E0', iconColor: '#FFB84D', onClick: () => goTo(`/pages/records/index?month=${this.selectedMonth}`) },
-				{ title: '个人中心', icon: 'person', bgColor: '#FFF9F0', iconColor: '#FF9900', onClick: () => goTo('/pages/profile/index') }
+				{ title: '预约', icon: 'calendar', bgColor: '#FFF7E6', iconColor: '#FFA500', onClick: () => goTo('/pages/reservations/index') },
+				{ title: '上传', icon: 'camera', bgColor: '#FFFBEA', iconColor: '#D46B08', onClick: () => goTo('/pages/records/create') },
+				{ title: '统计', icon: 'calendar', bgColor: '#FFF3E0', iconColor: '#FFB84D', onClick: () => goTo(`/pages/records/index?month=${this.selectedMonth}`) },
+				{ title: '我的', icon: 'person', bgColor: '#FFF9F0', iconColor: '#FF9900', onClick: () => goTo('/pages/profile/index') }
 			]
 		};
 	},

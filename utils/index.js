@@ -158,8 +158,6 @@ export const checkAndHandleNeedUploadRecord = (data) => {
 export const goTo = (url) => {
   const tabBarPages = [
     '/pages/index/index',
-    '/pages/reservations/index',
-    '/pages/records/create',
     '/pages/profile/index'
     // 只保留 pages.json 里 tabBar 配置的页面
   ];
