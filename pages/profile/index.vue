@@ -6,7 +6,7 @@
 		<!-- 头像卡片 -->
 		<view class="content">
 			<view class="profile-header" @click="goTo('/pages/profile/fillUserInfo')">
-				<image v-if="userInfo.avatar && userInfo.avatar !== '👤'" :src="userInfo.avatar" class="profile-avatar" />
+				<image v-if="userInfo.avatar && userInfo.avatar !== '👤'" :src="getAvatarUrl()" class="profile-avatar" />
 				<image v-else src="/static/icons/person.svg" class="profile-avatar" />
 				<view class="profile-info">
 					<text class="profile-nickname">{{ userInfo.name || '未登录' }}</text>
@@ -78,19 +78,101 @@ export default {
 				uni.redirectTo({ url: '/pages/login/login' });
 				return;
 			}
+			
+			// 先尝试从缓存获取用户信息
+			const cachedUserInfo = uni.getStorageSync('userInfo');
+			if (cachedUserInfo) {
+				try {
+					this.userInfo = JSON.parse(cachedUserInfo);
+				} catch (e) {
+					console.log('缓存用户信息解析失败，重新获取');
+				}
+			}
+			
 			try {
 				const res = await getUserProfile();
 				if (res && res.data) {
-					this.userInfo = {
+					const newUserInfo = {
 						name: res.data.user_name,
 						phone: res.data.phone,
 						avatar: res.data.user_avatar || ''
 					};
+					
+					// 检查头像是否有更新，有更新则清除旧缓存
+					if (newUserInfo.avatar !== this.userInfo.avatar && this.userInfo.avatar && this.userInfo.avatar !== '👤') {
+						this.clearAvatarCache();
+					}
+					
+					this.userInfo = newUserInfo;
 					uni.setStorageSync('userInfo', JSON.stringify(this.userInfo));
+					
+					// 缓存新头像
+					if (newUserInfo.avatar && newUserInfo.avatar !== '👤') {
+						this.cacheAvatar();
+					}
 				}
 			} catch (error) {
 				uni.showToast({ title: '获取用户信息失败', icon: 'none' });
 			}
+		},
+		
+		// 缓存头像
+		cacheAvatar() {
+			const avatarUrl = this.userInfo.avatar;
+			if (!avatarUrl || avatarUrl === '👤') return;
+			
+			const avatarKey = this.getAvatarKey();
+			
+			// 检查是否已经缓存过
+			if (uni.getStorageSync(avatarKey)) {
+				console.log('头像已缓存，跳过下载:', avatarKey);
+				return;
+			}
+			
+			// 下载并缓存头像
+			uni.downloadFile({
+				url: avatarUrl,
+				success: (res) => {
+					if (res.statusCode === 200) {
+						uni.setStorageSync(avatarKey, res.tempFilePath);
+						console.log('头像缓存成功:', avatarKey);
+						this.$forceUpdate();
+					}
+				},
+				fail: (err) => {
+					console.log('头像缓存失败:', err);
+				}
+			});
+		},
+		
+		// 清除头像缓存
+		clearAvatarCache() {
+			const avatarKey = this.getAvatarKey();
+			uni.removeStorageSync(avatarKey);
+			console.log('头像缓存已清除:', avatarKey);
+		},
+		
+		// 获取头像URL，优先使用缓存
+		getAvatarUrl() {
+			if (!this.userInfo.avatar || this.userInfo.avatar === '👤') {
+				return '/static/icons/person.svg';
+			}
+			
+			const avatarKey = this.getAvatarKey();
+			const cachedAvatar = uni.getStorageSync(avatarKey);
+			
+			if (cachedAvatar) {
+				console.log('使用缓存头像:', cachedAvatar);
+				return cachedAvatar;
+			}
+			
+			console.log('使用网络头像:', this.userInfo.avatar);
+			return this.userInfo.avatar;
+		},
+		
+		// 获取头像缓存键名
+		getAvatarKey() {
+			return `avatar_${this.userInfo.name || 'user'}`;
 		},
 		logout() {
 			uni.showModal({
@@ -98,6 +180,11 @@ export default {
 				content: '确认退出登录？',
 				success: (res) => {
 					if (res.confirm) {
+						// 清除头像缓存
+						if (this.userInfo.avatar && this.userInfo.avatar !== '👤') {
+							this.clearAvatarCache();
+						}
+						
 						uni.removeStorageSync('token');
 						uni.removeStorageSync('userInfo');
 						uni.reLaunch({ url: '/pages/login/login' });
