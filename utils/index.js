@@ -1,5 +1,6 @@
 import { cancelReservation } from '@/api/reservation';
 import { syncUserProfile } from '@/api';
+import { baseUrl } from '@/config';
 
 // 日期格式化
 export const formatDate = (date, format = 'YYYY-MM-DD') => {
@@ -205,4 +206,68 @@ const syncUserInfo = async (userInfo) => {
   } catch (error) {
     // 静默处理错误
   }
+};
+
+// 图片压缩
+export const compressImage = (filePath, quality = 0.8) => {
+  return new Promise((resolve, reject) => {
+    uni.compressImage({
+      src: filePath,
+      quality: quality,
+      success: (res) => {
+        resolve(res.tempFilePath);
+      },
+      fail: (err) => {
+        console.log('图片压缩失败:', err);
+        // 压缩失败时返回原图片
+        resolve(filePath);
+      }
+    });
+  });
+};
+
+// 生成缩略图
+export const generateThumbnail = (filePath, width = 100, height = 100) => {
+  return new Promise((resolve, reject) => {
+    uni.compressImage({
+      src: filePath,
+      quality: 0.6,
+      success: (res) => {
+        resolve(res.tempFilePath);
+      },
+      fail: (err) => {
+        console.log('缩略图生成失败:', err);
+        resolve(filePath);
+      }
+    });
+  });
+}; 
+
+// 图片URL处理工具函数
+export const getFullImageUrl = (path) => {
+  if (!path) return '';
+  // 如果已经是完整的http/https地址，直接返回
+  if (/^https?:\/\//.test(path)) {
+    return path;
+  }
+  // 如果是相对路径，拼接baseUrl
+  if (path.startsWith('/')) {
+    return `${baseUrl}${path}`;
+  }
+  // 如果是不带斜杠的相对路径，添加斜杠
+  return `${baseUrl}/${path}`;
+};
+
+// 获取头像完整URL
+export const getAvatarUrl = (avatarPath) => {
+  if (!avatarPath || avatarPath === '👤') {
+    return '/static/icons/person.svg';
+  }
+  return getFullImageUrl(avatarPath);
+};
+
+// 获取记录图片完整URL
+export const getRecordImageUrl = (imagePath) => {
+  if (!imagePath) return '';
+  return getFullImageUrl(imagePath);
 }; 

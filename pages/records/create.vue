@@ -65,7 +65,7 @@
 					<textarea
 						v-model="remark"
 						class="form-textarea"
-						placeholder="如：30分钟内完成、慢速模式等"
+						placeholder="如：特殊情况充到12点"
 					/>
 				</view>
 			</view>
@@ -110,7 +110,7 @@
 
 <script>
 import { getRecords, createRecord } from '@/api/record';
-import { formatDate, calculateAmount, getStatusStyle, goTo } from '@/utils';
+import { formatDate, calculateAmount, getStatusStyle, goTo, compressImage } from '@/utils';
 import { TIMESLOTS } from '@/config';
 import { uploadFile } from '@/api/index';
 import CommonNavBar from '@/components/CommonNavBar.vue';
@@ -165,15 +165,23 @@ export default {
 		this.loadRecentRecords(); // 每次进入页面都刷新最近记录
 	},
 	methods: {
-		chooseImage() {
+		async chooseImage() {
 			this.skipCheck = true; // 选择图片时不弹框
 			uni.chooseImage({
 				count: 1,
 				sizeType: ['compressed'],
 				sourceType: ['album', 'camera'],
-				success: (res) => {
-					this.tempFilePath = res.tempFilePaths[0];
-					this.imageUrl = res.tempFilePaths[0];
+				success: async (res) => {
+					try {
+						// 压缩图片
+						const compressedPath = await compressImage(res.tempFilePaths[0], 0.8);
+						this.tempFilePath = compressedPath;
+						this.imageUrl = compressedPath;
+					} catch (error) {
+						console.log('图片压缩失败，使用原图:', error);
+						this.tempFilePath = res.tempFilePaths[0];
+						this.imageUrl = res.tempFilePaths[0];
+					}
 				}
 			});
 		},
@@ -258,7 +266,7 @@ export default {
 				this.reservationDate = '';
 				this.reservationTimeslot = '';
 				setTimeout(() => {
-					goTo('/pages/index/index');
+					uni.switchTab({ url: '/pages/index/index' });
 				}, 1000);
 			} catch (error) {
 				console.error('[日志] 提交失败:', error);

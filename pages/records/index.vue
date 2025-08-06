@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
     <!-- 顶部导航栏 -->
-    <CommonNavBar title="充电记录" :showBack="true" />
+    <CommonNavBar title="充电分析" :showBack="true" />
 
     <!-- 月份选择，样式与首页一致 -->
     <view class="month-bar-row" @click="openMonthPicker">

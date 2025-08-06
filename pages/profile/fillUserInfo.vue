@@ -38,6 +38,7 @@
 import CommonNavBar from '@/components/CommonNavBar.vue';
 import { userAuth } from '@/utils/index';
 import { syncUserProfile, uploadFile } from '@/api';
+import { getAvatarUrl } from '@/utils';
 import { baseUrl } from '@/config';
 
 export default {
@@ -58,7 +59,8 @@ export default {
       userInfo = null;
     }
     if (userInfo) {
-      this.avatarUrl = userInfo.user_avatar || userInfo.avatar || '';
+      // 展示头像时用 getAvatarUrl 拼接
+      this.avatarUrl = getAvatarUrl(userInfo.user_avatar || userInfo.avatar || '');
       this.nickName = userInfo.user_name || userInfo.nickName || userInfo.name || '';
     }
   },
@@ -68,9 +70,9 @@ export default {
       if (!tempFilePath) return;
       try {
         const res = await uploadFile(tempFilePath);
-        // 拼接完整图片地址
+        // 只保存相对路径
         const url = res.data.url;
-        this.avatarUrl = url.startsWith('http') ? url : baseUrl + url;
+        this.avatarUrl = url;
       } catch (err) {
         uni.showToast({ title: '头像上传失败', icon: 'none' });
       }

@@ -36,6 +36,27 @@
 			}
 		},
 		{
+			"path": "pages/records/list",
+			"style": {
+				"navigationBarTitleText": "充电记录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/records/detail",
+			"style": {
+				"navigationBarTitleText": "记录详情",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/records/edit",
+			"style": {
+				"navigationBarTitleText": "编辑记录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/profile/index",
 			"style": {
 				"navigationBarTitleText": "个人中心",

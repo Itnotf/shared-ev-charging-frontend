@@ -53,7 +53,7 @@ import { getUserProfile} from '@/api/auth';
 import CommonNavBar from '@/components/CommonNavBar.vue';
 import BaseGroup from '@/components/BaseGroup.vue';
 import BaseGroupItem from '@/components/BaseGroupItem.vue';
-import { goTo } from '@/utils';
+import { goTo, getAvatarUrl } from '@/utils';
 
 export default {
 	components: { CommonNavBar, BaseGroup, BaseGroupItem },
@@ -154,20 +154,7 @@ export default {
 		
 		// 获取头像URL，优先使用缓存
 		getAvatarUrl() {
-			if (!this.userInfo.avatar || this.userInfo.avatar === '👤') {
-				return '/static/icons/person.svg';
-			}
-			
-			const avatarKey = this.getAvatarKey();
-			const cachedAvatar = uni.getStorageSync(avatarKey);
-			
-			if (cachedAvatar) {
-				console.log('使用缓存头像:', cachedAvatar);
-				return cachedAvatar;
-			}
-			
-			console.log('使用网络头像:', this.userInfo.avatar);
-			return this.userInfo.avatar;
+			return getAvatarUrl(this.userInfo.avatar);
 		},
 		
 		// 获取头像缓存键名
