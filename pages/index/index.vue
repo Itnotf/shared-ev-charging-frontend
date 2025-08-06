@@ -102,7 +102,7 @@ export default {
 				{ title: '充电预约', icon: 'calendar', bgColor: '#FFF7E6', iconColor: '#FFA500', onClick: () => goTo('/pages/reservations/index') },
 				{ title: '电量上传', icon: 'camera', bgColor: '#FFFBEA', iconColor: '#D46B08', onClick: () => goTo('/pages/records/create') },
 				{ title: '充电记录', icon: 'list', bgColor: '#FFF9F0', iconColor: '#FF9900', onClick: () => goTo(`/pages/records/list?month=${this.selectedMonth}`) },
-				{ title: '充电分析', icon: 'calendar', bgColor: '#FFF3E0', iconColor: '#FFB84D', onClick: () => goTo(`/pages/records/index?month=${this.selectedMonth}`) },
+				{ title: '电量分析', icon: 'compose', bgColor: '#FFF3E0', iconColor: '#FFB84D', onClick: () => goTo(`/pages/records/index?month=${this.selectedMonth}`) },
 			]
 		};
 	},

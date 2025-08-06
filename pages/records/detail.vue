@@ -81,7 +81,7 @@
 <script>
 import CommonNavBar from '@/components/CommonNavBar.vue';
 import { getRecordDetail } from '@/api/record';
-import { formatDate, getRecordImageUrl } from '@/utils';
+import { formatDate, getRecordImageUrl, getFullImageUrl } from '@/utils';
 import { TIMESLOTS } from '@/config';
 
 export default {
@@ -141,9 +141,10 @@ export default {
 		
 		previewImage() {
 			if (this.record.image_url) {
+				const url = getFullImageUrl(this.record.image_url);
 				uni.previewImage({
-					urls: [this.record.image_url],
-					current: this.record.image_url
+					urls: [url],
+					current: url
 				});
 			}
 		},
