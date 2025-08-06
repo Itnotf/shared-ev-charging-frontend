@@ -258,16 +258,49 @@ export const getFullImageUrl = (path) => {
   return `${baseUrl}/${path}`;
 };
 
-// 获取头像完整URL
+// 统一的本地图片缓存工具
+export const getCachedImageUrl = (url) => {
+  if (!url) return '';
+  const cacheKey = 'img_cache_' + url;
+  const cached = uni.getStorageSync(cacheKey);
+  if (cached) return cached;
+  // 只支持异步场景下首次加载，建议页面用 async/await 调用
+  // 这里返回网络地址，页面 mounted 时可异步更新为本地缓存
+  return getFullImageUrl(url);
+};
+
+// 异步版本，首次加载时自动下载并缓存
+export const fetchAndCacheImage = (url) => {
+  return new Promise((resolve) => {
+    if (!url) return resolve('');
+    const cacheKey = 'img_cache_' + url;
+    const cached = uni.getStorageSync(cacheKey);
+    if (cached) return resolve(cached);
+    uni.downloadFile({
+      url: getFullImageUrl(url),
+      success: (res) => {
+        if (res.statusCode === 200) {
+          uni.setStorageSync(cacheKey, res.tempFilePath);
+          resolve(res.tempFilePath);
+        } else {
+          resolve(getFullImageUrl(url));
+        }
+      },
+      fail: () => resolve(getFullImageUrl(url))
+    });
+  });
+};
+
+// 精简 getAvatarUrl，优先本地缓存
 export const getAvatarUrl = (avatarPath) => {
   if (!avatarPath || avatarPath === '👤') {
     return '/static/icons/person.svg';
   }
-  return getFullImageUrl(avatarPath);
+  return getCachedImageUrl(avatarPath);
 };
 
-// 获取记录图片完整URL
+// 精简 getRecordImageUrl，优先本地缓存
 export const getRecordImageUrl = (imagePath) => {
   if (!imagePath) return '';
-  return getFullImageUrl(imagePath);
+  return getCachedImageUrl(imagePath);
 }; 

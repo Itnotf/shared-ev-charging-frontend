@@ -6,7 +6,7 @@
 		<!-- 头像卡片 -->
 		<view class="content">
 			<view class="profile-header" @click="goTo('/pages/profile/fillUserInfo')">
-				<image v-if="userInfo.avatar && userInfo.avatar !== '👤'" :src="getAvatarUrl()" class="profile-avatar" />
+				<image v-if="userInfo.avatar && userInfo.avatar !== '👤'" :src="getAvatarUrl(userInfo.avatar)" class="profile-avatar" />
 				<image v-else src="/static/icons/person.svg" class="profile-avatar" />
 				<view class="profile-info">
 					<text class="profile-nickname">{{ userInfo.name || '未登录' }}</text>
@@ -153,8 +153,8 @@ export default {
 		},
 		
 		// 获取头像URL，优先使用缓存
-		getAvatarUrl() {
-			return getAvatarUrl(this.userInfo.avatar);
+		getAvatarUrl(avatarUrl) {
+			return getAvatarUrl(avatarUrl);
 		},
 		
 		// 获取头像缓存键名

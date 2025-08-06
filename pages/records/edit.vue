@@ -34,7 +34,7 @@
 				</view>
 				<view class="upload-area" @click="chooseImage">
 					<block v-if="imageUrl">
-						<image :src="imageUrl" mode="aspectFill" class="upload-image"></image>
+						<image v-if="imageUrl" :src="getRecordImageUrl(imageUrl)" mode="aspectFill" class="upload-image"></image>
 						<view class="image-overlay">
 							<text class="overlay-text">点击更换图片</text>
 						</view>

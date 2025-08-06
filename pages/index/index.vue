@@ -33,7 +33,7 @@
 				</view>
 				<view class="reservation-info">
 					<view class="reservation-info-main" @click="goToReservationPage">
-						<image v-if="currentReservation.user_avatar" :src="currentReservation.user_avatar" class="avatar-img" />
+						<image v-if="currentReservation.user_avatar" :src="getAvatarUrl(currentReservation.user_avatar)" class="avatar-img" />
 						<view v-else class="avatar-default">👤</view>
 						<view class="reservation-detail">
 							<view class="reservation-user">{{ currentReservation.user_name || '用户' }}</view>
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { checkAndHandleNeedUploadRecord, getWeekday, goTo, getCurrentDate } from '@/utils';
+import { checkAndHandleNeedUploadRecord, getWeekday, goTo, getCurrentDate, getAvatarUrl } from '@/utils';
 import { TIMESLOTS } from '@/config';
 import { getCurrentReservationStatus, cancelReservation } from '@/api/reservation';
 import { getMonthlyStatistics } from '@/api/statistics';
@@ -248,7 +248,8 @@ export default {
 			console.log('Syncing user info to backend:', userInfo);
 			// 将用户信息发送到后端的逻辑
 			// 这里可以调用一个API来同步用户信息
-		}
+		},
+		getAvatarUrl
 	}
 };
 // 预约卡片、宫格区块、数据区块建议抽成独立组件，便于复用

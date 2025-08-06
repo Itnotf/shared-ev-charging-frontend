@@ -5,8 +5,8 @@
       <view class="avatar-section">
         <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar" class="avatar-btn">
           <image
-            v-if="avatarUrl"
-            :src="avatarUrl"
+            v-if="avatarUrl || avatarLocalPath"
+            :src="getDisplayAvatar()"
             class="profile-avatar"
           />
           <image
@@ -45,12 +45,12 @@ export default {
   components: { CommonNavBar },
   data() {
     return {
-      avatarUrl: '',
+      avatarUrl: '', // 只存相对路径
+      avatarLocalPath: '', // 本地临时路径，优先展示
       nickName: ''
     };
   },
   onLoad() {
-    // 自动填充本地已保存的头像和昵称
     let userInfoRaw = uni.getStorageSync('userInfo');
     let userInfo;
     try {
@@ -59,8 +59,8 @@ export default {
       userInfo = null;
     }
     if (userInfo) {
-      // 展示头像时用 getAvatarUrl 拼接
-      this.avatarUrl = getAvatarUrl(userInfo.user_avatar || userInfo.avatar || '');
+      this.avatarUrl = userInfo.user_avatar || userInfo.avatar || '';
+      this.avatarLocalPath = '';
       this.nickName = userInfo.user_name || userInfo.nickName || userInfo.name || '';
     }
   },
@@ -69,13 +69,24 @@ export default {
       const tempFilePath = e.detail.avatarUrl;
       if (!tempFilePath) return;
       try {
+        // 先本地显示
+        this.avatarLocalPath = tempFilePath;
+        // 上传到服务器
         const res = await uploadFile(tempFilePath);
-        // 只保存相对路径
-        const url = res.data.url;
+        const url = res.data.url; // 相对路径
+        // 缓存本地路径
+        const cacheKey = 'img_cache_' + url;
+        uni.setStorageSync(cacheKey, tempFilePath);
+        // 保存到后端和本地的都是相对路径
         this.avatarUrl = url;
       } catch (err) {
         uni.showToast({ title: '头像上传失败', icon: 'none' });
       }
+    },
+    // 展示头像时优先用本地路径
+    getDisplayAvatar() {
+      if (this.avatarLocalPath) return this.avatarLocalPath;
+      return getAvatarUrl(this.avatarUrl);
     },
     async onSubmit() {
       if (!this.avatarUrl || !this.nickName) {

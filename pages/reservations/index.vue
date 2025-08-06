@@ -68,7 +68,7 @@
 								<text class="time-slot-name">{{ TIMESLOTS.day.name }}</text>
 								<!-- 白班预约信息 -->
 								<view v-if="reservations[selectedDate + '_day']" class="reserved-info-avatar-tag">
-									<image v-if="reservations[selectedDate + '_day'].user_avatar" :src="reservations[selectedDate + '_day'].user_avatar" class="avatar-img" />
+									<image v-if="reservations[selectedDate + '_day'].user_avatar" :src="getAvatarUrl(reservations[selectedDate + '_day'].user_avatar)" class="avatar-img" />
 									<view class="reserved-tag">
 										{{ reservations[selectedDate + '_day'].user_name || reservations[selectedDate + '_day'].userName || 'XXX' }}已预约
 									</view>
@@ -90,7 +90,7 @@
 								<text class="time-slot-name">{{ TIMESLOTS.night.name }}</text>
 								<!-- 夜班预约信息 -->
 								<view v-if="reservations[selectedDate + '_night']" class="reserved-info-avatar-tag">
-									<image v-if="reservations[selectedDate + '_night'].user_avatar" :src="reservations[selectedDate + '_night'].user_avatar" class="avatar-img" />
+									<image v-if="reservations[selectedDate + '_night'].user_avatar" :src="getAvatarUrl(reservations[selectedDate + '_night'].user_avatar)" class="avatar-img" />
 									<view class="reserved-tag">
 										{{ reservations[selectedDate + '_night'].user_name || reservations[selectedDate + '_night'].userName || 'XXX' }}已预约
 									</view>
@@ -122,7 +122,7 @@
 
 <script>
 import { getReservations, createReservation, getCurrentReservationStatus, cancelReservation } from '@/api/reservation';
-import { formatDate, getCurrentDate, checkAndHandleNeedUploadRecord, getWeekday, goTo, checkAndFetchUserProfile } from '@/utils';
+import { formatDate, getCurrentDate, checkAndHandleNeedUploadRecord, getWeekday, goTo, checkAndFetchUserProfile, getAvatarUrl } from '@/utils';
 import { TIMESLOTS } from '@/config';
 import uniNavBar from '@dcloudio/uni-ui/lib/uni-nav-bar/uni-nav-bar.vue';
 import { getUnsubmittedRecord } from '@/api/record';
@@ -499,7 +499,8 @@ export default {
 			console.log('Syncing user info to backend:', userInfo);
 			// 将用户信息发送到后端的逻辑
 			// 这里可以调用一个API来同步用户信息
-		}
+		},
+		getAvatarUrl
 	}
 };
 </script>
