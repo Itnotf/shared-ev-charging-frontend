@@ -43,7 +43,8 @@
 					rightIcon="right"
 				/>
 			</BaseGroup>
-			<button class="profile-logout-btn" @click="logout">退出登录</button>
+			<button v-if="userInfo.name !== '未登录'" class="profile-logout-btn" @click="logout">退出登录</button>
+			<button v-else class="profile-login-btn" @click="goToLogin">立即登录</button>
 		</view>
 	</view>
 </template>
@@ -75,7 +76,12 @@ export default {
 		async getUserInfo() {
 			const token = uni.getStorageSync('token');
 			if (!token) {
-				uni.redirectTo({ url: '/pages/login/login' });
+				// 未登录时显示默认信息，不强制跳转
+				this.userInfo = {
+					name: '未登录',
+					phone: '',
+					avatar: ''
+				};
 				return;
 			}
 			
@@ -174,10 +180,14 @@ export default {
 						
 						uni.removeStorageSync('token');
 						uni.removeStorageSync('userInfo');
-						uni.reLaunch({ url: '/pages/login/login' });
+						uni.showToast({ title: '已退出登录', icon: 'success' });
+						this.getUserInfo();
 					}
 				}
 			});
+		},
+		goToLogin() {
+			goTo('/pages/login/login');
 		}
 	}
 };
@@ -239,5 +249,24 @@ export default {
 }
 .profile-logout-btn:active {
 	background: #f5f5f5;
+}
+.profile-login-btn {
+	width: 100%;
+	margin: 24rpx 0 0 0;
+	background: #FFA500;
+	color: #fff;
+	border-radius: 8rpx;
+	font-size: 32rpx;
+	font-weight: normal;
+	height: 96rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	box-shadow: none;
+	transition: background 0.2s;
+}
+.profile-login-btn:active {
+	background: #E69500;
 }
 </style> 

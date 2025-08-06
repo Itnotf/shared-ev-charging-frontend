@@ -1,5 +1,4 @@
 import App from './App'
-import { userAuth, redirectToLogin } from '@/utils';
 
 // #ifndef VUE3
 import Vue from 'vue'
@@ -25,17 +24,3 @@ export function createApp() {
   }
 }
 // #endif
-
-// 全局路由守卫
-['navigateTo', 'switchTab', 'redirectTo', 'reLaunch'].forEach(method => {
-  uni.addInterceptor(method, {
-    invoke(e) {
-      const whiteList = ['/pages/login/login', '/pages/profile/agreement', '/pages/profile/privacy'];
-      if (!whiteList.includes(e.url.split('?')[0]) && !userAuth.check()) {
-        redirectToLogin();
-        return false;
-      }
-      return true;
-    }
-  });
-});
