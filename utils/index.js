@@ -245,17 +245,22 @@ export const generateThumbnail = (filePath, width = 100, height = 100) => {
 
 // 图片URL处理工具函数
 export const getFullImageUrl = (path) => {
-  if (!path) return '';
-  // 如果已经是完整的http/https地址，直接返回
+  if (!path) {
+    console.log('[getFullImageUrl] path 为空');
+    return '';
+  }
   if (/^https?:\/\//.test(path)) {
+    console.log('[getFullImageUrl] 已是完整URL:', path);
     return path;
   }
-  // 如果是相对路径，拼接baseUrl
   if (path.startsWith('/')) {
-    return `${baseUrl}${path}`;
+    const url = `${baseUrl}${path}`;
+    console.log('[getFullImageUrl] 相对路径拼接:', path, '=>', url);
+    return url;
   }
-  // 如果是不带斜杠的相对路径，添加斜杠
-  return `${baseUrl}/${path}`;
+  const url = `${baseUrl}/${path}`;
+  console.log('[getFullImageUrl] 补斜杠拼接:', path, '=>', url);
+  return url;
 };
 
 // 统一的本地图片缓存工具

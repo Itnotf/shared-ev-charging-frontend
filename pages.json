@@ -97,6 +97,20 @@
 				"navigationBarTitleText": "完善头像昵称",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/profile/userManage",
+			"style": {
+				"navigationBarTitleText": "用户管理",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/profile/monthlyReport",
+			"style": {
+				"navigationBarTitleText": "月度对账",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

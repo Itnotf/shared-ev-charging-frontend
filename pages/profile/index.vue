@@ -43,6 +43,20 @@
 					rightIcon="right"
 				/>
 			</BaseGroup>
+			<BaseGroup v-if="isAdmin">
+				<BaseGroupItem
+					icon="group"
+					title="用户管理"
+					@click="goTo('/pages/profile/userManage')"
+					rightIcon="right"
+				/>
+				<BaseGroupItem
+					icon="list"
+					title="月度对账"
+					@click="goTo('/pages/profile/monthlyReport')"
+					rightIcon="right"
+				/>
+			</BaseGroup>
 			<button v-if="userInfo.name !== '未登录'" class="profile-logout-btn" @click="logout">退出登录</button>
 			<button v-else class="profile-login-btn" @click="goToLogin">立即登录</button>
 		</view>
@@ -82,6 +96,7 @@ export default {
 					phone: '',
 					avatar: ''
 				};
+				this.isAdmin = false;
 				return;
 			}
 			
@@ -116,9 +131,12 @@ export default {
 					if (newUserInfo.avatar && newUserInfo.avatar !== '👤') {
 						this.cacheAvatar();
 					}
+					// 设置isAdmin
+					this.isAdmin = res.data.role === 'admin';
 				}
 			} catch (error) {
 				uni.showToast({ title: '获取用户信息失败', icon: 'none' });
+				this.isAdmin = false;
 			}
 		},
 		
