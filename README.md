@@ -1,189 +1,197 @@
-# 澜充小站
+# LanChong Station
 
-基于 uni-app + Vue3 的澜充小站小程序前端，支持微信小程序、H5、App等多端，界面简洁，体验流畅，代码结构清晰，易于维护和扩展。
+A uni-app + Vue3 based mini-program frontend for LanChong Station, supporting WeChat Mini Program, H5, App and other platforms. Features clean interface, smooth experience, clear code structure, easy maintenance and extension.
 
 ---
 
-## 目录结构
+## Language Switch
+
+- [English (Current)](README.md)
+- [中文版](README_CN.md)
+
+---
+
+## Directory Structure
 
 ```
 .
-├── api/                // 后端接口封装
-├── components/         // 公共组件（如导航栏、卡片、图标等）
-├── config/             // 配置文件（如常量 TIMESLOTS）
-├── pages/              // 业务页面（首页、预约、记录、个人中心、登录等）
-├── static/             // 静态资源（svg、png等，仅保留实际引用）
-├── uni_modules/        // 插件市场模块（已被 .gitignore 忽略，见下方依赖声明）
-├── utils/              // 工具函数（如跳转、日期、金额等）
-├── uni.scss            // 全局样式变量与 mixin
-├── manifest.json       // 项目配置，平台适配
-├── pages.json          // 路由与 tabBar 配置
-├── package.json        // npm 依赖声明
-├── uni_modules_list.md // uni_modules 插件依赖清单
+├── api/                // Backend API encapsulation
+├── components/         // Common components (navigation bar, cards, icons, etc.)
+├── config/             // Configuration files (constants like TIMESLOTS)
+├── pages/              // Business pages (home, reservations, records, profile, login, etc.)
+├── static/             // Static resources (svg, png, etc., only keeping actually referenced)
+├── uni_modules/        // Plugin market modules (ignored by .gitignore, see dependency declaration below)
+├── utils/              // Utility functions (navigation, date, amount, etc.)
+├── uni.scss            // Global style variables and mixins
+├── manifest.json       // Project configuration, platform adaptation
+├── pages.json          // Routing and tabBar configuration
+├── package.json        // npm dependency declaration
+├── uni_modules_list.md // uni_modules plugin dependency list
 └── ...
 ```
 
 ---
 
-## 主要页面
+## Main Pages
 
-- **首页**（/pages/index/index.vue）：功能入口、充电总览、当前预约、未上传记录弹窗
-- **预约**（/pages/reservations/index.vue）：日历选日期、班次，预约/取消
-- **充电记录管理**：
-  - **统计页面**（/pages/records/index.vue）：月度统计、饼图、柱状图
-  - **记录列表**（/pages/records/list.vue）：按月展示充电记录，支持查看详情
-  - **记录详情**（/pages/records/detail.vue）：显示完整记录信息，支持编辑
-  - **记录编辑**（/pages/records/edit.vue）：修改记录信息，支持重新上传图片
-  - **记录创建**（/pages/records/create.vue）：上传新的充电记录
-- **个人中心**（/pages/profile/index.vue 等）：用户信息、通知、隐私、协议、关于、退出登录
-- **登录**（/pages/login/login.vue）：微信一键登录、协议勾选
-- **用户管理（仅管理员）**（/pages/profile/userManage.vue）：admin可查看所有用户，切换预约权限、编辑电价
-- **月度对账（仅管理员）**（/pages/profile/monthlyReport.vue）：admin可查看所有用户指定月份总金额及上传状态，一键复制对账信息，格式适合微信群发
-
----
-
-## 主要组件
-
-- **CommonNavBar**：自定义导航栏，支持返回/右侧按钮
-- **CommonCard**：卡片容器，统一样式
-- **SvgIcon**：SVG图标组件，支持 uni-icons 或自定义svg
-- **BaseGroup/BaseGroupItem**：分组列表及项，常用于个人中心
+- **Home** (/pages/index/index.vue): Function entry, charging overview, current reservation, unsubmitted record popup
+- **Reservation** (/pages/reservations/index.vue): Calendar date selection, shift selection, reservation/cancellation
+- **Charging Record Management**:
+  - **Statistics Page** (/pages/records/index.vue): Monthly statistics, pie chart, bar chart
+  - **Record List** (/pages/records/list.vue): Display charging records by month, support detail view
+  - **Record Detail** (/pages/records/detail.vue): Display complete record information, support editing
+  - **Record Edit** (/pages/records/edit.vue): Modify record information, support re-uploading images
+  - **Record Create** (/pages/records/create.vue): Upload new charging records
+- **Profile** (/pages/profile/index.vue, etc.): User information, notifications, privacy, agreements, about, logout
+- **User Management (Admin Only)** (/pages/profile/userManage.vue): Admin can view all users, toggle reservation permissions, edit electricity prices
+- **Monthly Report (Admin Only)** (/pages/profile/monthlyReport.vue): Admin can view all users' total amounts for specified month and upload status, one-click copy reconciliation info, format suitable for WeChat group messaging
+- **Login** (/pages/login/login.vue): WeChat one-click login, agreement checkbox
 
 ---
 
-## 核心功能特性
+## Main Components
 
-### 1. 充电记录管理系统
-- **分层管理**：统计页面展示数据分析，记录列表展示详细记录
-- **完整流程**：创建 → 列表 → 详情 → 编辑 → 保存
-- **数据验证**：创建记录时验证预约ID，确保数据完整性
-- **图片处理**：支持图片压缩、缩略图生成、本地缓存
-
-### 2. 统一图片缓存机制
-- **智能缓存**：头像和记录图片统一使用 `fetchAndCacheImage` 机制
-- **性能优化**：优先使用本地缓存，网络请求作为备选
-- **跨平台兼容**：支持小程序、H5、App 多端图片显示
-
-### 3. 导航流程优化
-- **首页功能简化**：预约充电→预约，上传记录→上传，充电记录→统计，个人中心→我的
-- **新增记录入口**：首页增加"记录"卡片，直接进入记录列表
-- **智能跳转**：上传完成后直接返回首页，编辑完成后返回详情页
-
-### 4. 用户体验提升
-- **头像缓存**：个人中心头像本地缓存，提升加载速度
-- **数据刷新**：详情页编辑后自动刷新数据
-- **金额计算**：编辑页面自动计算费用
-- **权限控制**：只能编辑自己的记录
-
-### 5. 管理员专属功能
-- **权限入口**：仅admin用户在个人中心看到“用户管理”“月度对账”入口，单独分组展示
-- **用户管理**：支持切换can_reserve状态、编辑unit_price，所有操作实时生效
-- **月度对账**：可选择月份，展示所有用户本月总金额及是否已上传数据，一键复制内容为“姓名：金额元”或“姓名：未上传”，适合微信粘贴
+- **CommonNavBar**: Custom navigation bar, supports back/right button
+- **CommonCard**: Card container, unified styling
+- **SvgIcon**: SVG icon component, supports uni-icons or custom svg
+- **BaseGroup/BaseGroupItem**: Grouped list and items, commonly used in profile center
 
 ---
 
-## 全局样式
+## Core Features
 
-- **uni.scss**：定义了主色调、辅助色、字体、间距、圆角、阴影等变量和 mixin，页面和组件可直接使用，风格统一，易于主题切换。
+### 1. Charging Record Management System
+- **Layered Management**: Statistics page shows data analysis, record list shows detailed records
+- **Complete Workflow**: Create → List → Detail → Edit → Save
+- **Data Validation**: Validate reservation ID when creating records, ensuring data integrity
+- **Image Processing**: Support image compression, thumbnail generation, local caching
 
----
+### 2. Unified Image Caching Mechanism
+- **Smart Caching**: Avatars and record images uniformly use `fetchAndCacheImage` mechanism
+- **Performance Optimization**: Prioritize local cache, network requests as fallback
+- **Cross-platform Compatibility**: Support mini-program, H5, App multi-platform image display
 
-## 接口与工具
+### 3. Navigation Flow Optimization
+- **Home Function Simplification**: Reservation charging → Reservation, Upload records → Upload, Charging records → Statistics, Profile center → My
+- **New Record Entry**: Add "Records" card on home page, directly enter record list
+- **Smart Navigation**: Return to home page after upload completion, return to detail page after edit completion
 
-- **api/**：所有后端接口均有独立文件封装，支持 token 自动注入、401 自动刷新、统一错误处理
-- **utils/**：包含日期格式化、金额计算、全局跳转 goTo、认证管理 userAuth、图片缓存、压缩等常用工具函数
+### 4. User Experience Enhancement
+- **Avatar Caching**: Profile center avatar local caching, improve loading speed
+- **Data Refresh**: Auto-refresh data after detail page editing
+- **Amount Calculation**: Auto-calculate fees on edit page
+- **Permission Control**: Can only edit own records
 
-### 新增API接口
-- `getRecordsList(month)`：获取指定月份的记录列表
-- `getRecordDetail(id)`：获取记录详情
-- `updateRecord(id, data)`：更新记录信息
-
-### 图片处理工具
-- `compressImage(path, quality)`：图片压缩
-- `generateThumbnail(path)`：生成缩略图
-- `fetchAndCacheImage(url, cacheKeyPrefix)`：统一图片缓存机制
-- `getAvatarUrl(avatarPath)`：头像URL处理
-- `getRecordImageUrl(imagePath)`：记录图片URL处理
-
----
-
-## 插件依赖（uni_modules）
-
-本项目依赖的 uni_modules 插件**不会提交到 git 仓库**，请根据 [uni_modules_list.md](./uni_modules_list.md) 文件说明，手动安装所需插件。例如：
-
-- qiun-data-charts（高性能跨端图表组件）
-
-如有新增/删除 uni_modules，请同步更新该清单。
+### 5. Admin-Only Features
+- **Permission Entry**: Only admin users see "User Management" and "Monthly Report" entries in profile center, displayed in separate group
+- **User Management**: Support toggling can_reserve status, editing unit_price, all operations take effect immediately
+- **Monthly Report**: Can select month, display all users' total amounts for current month and whether data has been uploaded, one-click copy content as "Name: Amount" or "Name: Not uploaded", suitable for WeChat pasting
 
 ---
 
-## 运行与开发
+## Global Styles
 
-### 1. 安装依赖
+- **uni.scss**: Defines primary colors, secondary colors, fonts, spacing, border radius, shadows and other variables and mixins, pages and components can use directly, unified style, easy theme switching.
+
+---
+
+## APIs and Utilities
+
+- **api/**: All backend APIs have independent file encapsulation, support automatic token injection, 401 auto-refresh, unified error handling
+- **utils/**: Contains date formatting, amount calculation, global navigation goTo, authentication management userAuth, image caching, compression and other common utility functions
+
+### New API Interfaces
+- `getRecordsList(month)`: Get record list for specified month
+- `getRecordDetail(id)`: Get record details
+- `updateRecord(id, data)`: Update record information
+- `getAllUsers()`: Get all users list (admin only)
+- `updateUserReserve(userId, canReserve)`: Update user reservation permission (admin only)
+- `updateUserPrice(userId, unitPrice)`: Update user electricity price (admin only)
+- `getMonthlyReport(month)`: Get monthly reconciliation data (admin only)
+
+### Image Processing Tools
+- `compressImage(path, quality)`: Image compression
+- `generateThumbnail(path)`: Generate thumbnails
+- `fetchAndCacheImage(url, cacheKeyPrefix)`: Unified image caching mechanism
+- `getAvatarUrl(avatarPath)`: Avatar URL processing
+- `getRecordImageUrl(imagePath)`: Record image URL processing
+
+---
+
+## Plugin Dependencies (uni_modules)
+
+The uni_modules plugins this project depends on **will not be submitted to git repository**. Please manually install required plugins according to [uni_modules_list.md](./uni_modules_list.md) file instructions. For example:
+
+- qiun-data-charts (High-performance cross-platform chart component)
+
+If there are new/deleted uni_modules, please update the list accordingly.
+
+---
+
+## Running and Development
+
+### 1. Install Dependencies
 
 ```bash
-# 安装 npm 依赖
+# Install npm dependencies
 npm install
 ```
 
-### 2. 安装 uni_modules 插件
+### 2. Install uni_modules Plugins
 
-请参考 [uni_modules_list.md](./uni_modules_list.md) 手动安装所有必需插件。
+Please refer to [uni_modules_list.md](./uni_modules_list.md) to manually install all required plugins.
 
-### 3. 启动开发
+### 3. Start Development
 
-- 推荐使用 HBuilderX 打开项目，选择对应平台（微信小程序/H5/App）运行或发行。
-- 也可使用 CLI 方式运行（需全局安装 @dcloudio/uni-app）：
+- Recommended to use HBuilderX to open the project, select corresponding platform (WeChat Mini Program/H5/App) to run or build.
+- Can also use CLI method (need to install @dcloudio/uni-app globally):
 
 ```bash
-# H5 预览
+# H5 preview
 npm run dev:h5
 
-# 微信小程序预览
+# WeChat Mini Program preview
 npm run dev:mp-weixin
 ```
 
 ---
 
-## 版本与平台
+## Version and Platform
 
 - Vue 3.x
 - uni-app
-- 支持微信小程序、H5、App等多端
-- 详见 manifest.json
+- Support WeChat Mini Program, H5, App and other platforms
+- See manifest.json for details
 
 ---
 
-## 代码规范与协作建议
+## Code Standards and Collaboration Suggestions
 
-- 组件、页面、工具函数、接口分层清晰，命名规范
-- 静态资源只保留实际引用，未用资源及时清理
-- uni_modules 目录不提交，依赖清单单独维护
-- 图片缓存机制统一，避免重复代码
-- 如有自定义模块，建议单独提交对应子目录
-
----
-
-## 更新日志
-
-### 最新版本
-- ✅ 新增充电记录管理系统（列表、详情、编辑页面）
-- ✅ 实现统一图片缓存机制，提升加载性能
-- ✅ 优化首页功能命名，简化用户理解
-- ✅ 完善导航流程，提升用户体验
-- ✅ 新增数据验证，确保记录创建完整性
-- ✅ 支持图片压缩和缩略图生成
-- ✅ 新增管理员专属“用户管理”“月度对账”页面，入口单独分组，功能详见上文
-- ✅ 月度对账一键复制内容格式优化，适合微信群发
-- ✅ 统一头像渲染逻辑，所有页面均通过getAvatarUrl处理
+- Components, pages, utility functions, APIs are clearly layered, naming conventions
+- Static resources only keep actually referenced, unused resources cleaned up promptly
+- uni_modules directory not submitted, dependency list maintained separately
+- Image caching mechanism unified, avoid duplicate code
+- If there are custom modules, suggest submitting corresponding subdirectories separately
 
 ---
 
-## 贡献与反馈
+## Update Log
 
-如需二次开发、功能扩展或有任何问题，欢迎 issue 或联系维护者。
+### Latest Version
+- ✅ Added charging record management system (list, detail, edit pages)
+- ✅ Implemented unified image caching mechanism, improve loading performance
+- ✅ Optimized home page function naming, simplify user understanding
+- ✅ Improved navigation flow, enhance user experience
+- ✅ Added data validation, ensure record creation integrity
+- ✅ Support image compression and thumbnail generation
+- ✅ Added admin-only "User Management" and "Monthly Report" pages, separate entry group, see details above
+- ✅ Optimized monthly report one-click copy content format, suitable for WeChat group messaging
+- ✅ Unified avatar rendering logic, all pages use getAvatarUrl processing
 
---- 
+---
 
-如需英文版或更详细的开发文档，请告知！ 
+## Contribution and Feedback
+
+For secondary development, feature extension or any questions, welcome to create issues or contact maintainers.
+
 
