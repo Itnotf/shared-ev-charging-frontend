@@ -68,6 +68,7 @@
 
 <script>
   import { getUserProfile } from '@/api/auth';
+  import { baseUrl } from '@/config';
 
   import BaseGroup from '@/components/BaseGroup.vue';
   import BaseGroupItem from '@/components/BaseGroupItem.vue';
@@ -161,9 +162,25 @@
           return;
         }
 
+        // 获取完整的头像URL（网络地址）
+        let fullAvatarUrl = '';
+        if (/^https?:\/\//.test(avatarUrl)) {
+          // 已经是完整的URL
+          fullAvatarUrl = avatarUrl;
+        } else if (avatarUrl.startsWith('/')) {
+          // 相对路径，需要拼接baseUrl
+          fullAvatarUrl = `${baseUrl}${avatarUrl}`;
+        } else if (avatarUrl) {
+          // 其他情况，拼接baseUrl
+          fullAvatarUrl = `${baseUrl}/${avatarUrl}`;
+        } else {
+          // 无效的头像URL，跳过缓存
+          return;
+        }
+
         // 下载并缓存头像
         uni.downloadFile({
-          url: avatarUrl,
+          url: fullAvatarUrl,
           success: (res) => {
             if (res.statusCode === 200) {
               uni.setStorageSync(avatarKey, res.tempFilePath);
