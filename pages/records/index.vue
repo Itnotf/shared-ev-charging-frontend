@@ -1,7 +1,5 @@
 <template>
   <view class="container">
-    <!-- 顶部导航栏 -->
-    <CommonNavBar title="充电分析" :showBack="true" />
 
     <!-- 月份选择，样式与首页一致 -->
     <view class="month-bar-row" @click="openMonthPicker">
@@ -113,7 +111,7 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import SvgIcon from '@/components/SvgIcon.vue';
   import { getDailyStatistics } from '@/api/statistics';
   import { getMonthlyShiftStatistics } from '@/api/statistics';
@@ -123,7 +121,7 @@
   import { TIMESLOTS } from '@/config';
 
   export default {
-    components: { CommonNavBar, SvgIcon, qiunDataCharts },
+    components: { SvgIcon, qiunDataCharts },
     data() {
       return {
         TIMESLOTS, // 显式挂载，保证模板和js都能访问

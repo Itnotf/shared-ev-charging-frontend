@@ -51,7 +51,7 @@ A uni-app + Vue3 based mini-program frontend for LanChong Station, supporting We
 
 ## Main Components
 
-- **CommonNavBar**: Custom navigation bar, supports back/right button
+
 - **CommonCard**: Card container, unified styling
 - **SvgIcon**: SVG icon component, supports uni-icons or custom svg
 - **BaseGroup/BaseGroupItem**: Grouped list and items, commonly used in profile center

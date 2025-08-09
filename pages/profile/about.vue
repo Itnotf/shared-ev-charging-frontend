@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="关于小程序" :showBack="true" />
 
     <!-- 内容区域 -->
     <view class="content">
@@ -78,13 +77,13 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { goTo } from '@/utils';
   export default {
     data() {
       return {};
     },
-    components: { CommonNavBar },
+
     methods: {
       // 复制联系方式
       copyContact(type) {

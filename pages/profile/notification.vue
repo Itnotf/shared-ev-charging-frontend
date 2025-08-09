@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="通知设置" :showBack="true" />
     <view class="content">
       <!-- 通知类型分组 -->
       <BaseGroup>
@@ -54,12 +53,12 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import BaseGroup from '@/components/BaseGroup.vue';
   import BaseGroupItem from '@/components/BaseGroupItem.vue';
   import { SUCCESS_COLOR } from '@/config';
   export default {
-    components: { CommonNavBar, BaseGroup, BaseGroupItem },
+    components: { BaseGroup, BaseGroupItem },
     data() {
       return {
         notificationSettings: [

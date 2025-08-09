@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="隐私政策" :showBack="true" />
 
     <!-- 内容区域 -->
     <view class="content">
@@ -111,12 +110,12 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   export default {
     data() {
       return {};
     },
-    components: { CommonNavBar },
+
     methods: {
       // 返回上一页
       navigateBack() {

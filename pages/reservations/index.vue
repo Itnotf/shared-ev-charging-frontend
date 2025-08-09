@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="预约充电" :showBack="true" />
     <view class="content">
       <!-- 日历视图 -->
       <CommonCard customClass="card">
@@ -201,13 +200,12 @@
   import { TIMESLOTS, PRIMARY_COLOR } from '@/config';
   import { getUnsubmittedRecord } from '@/api/record';
   import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import CommonCard from '@/components/CommonCard.vue';
 
   export default {
     components: {
       uniIcons,
-      CommonNavBar,
       CommonCard,
     },
     data() {
@@ -595,7 +593,6 @@
   .content {
     flex: 1;
     padding: 20rpx;
-    padding-top: 0;
     overflow-y: auto;
   }
 

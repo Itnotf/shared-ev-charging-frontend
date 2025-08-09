@@ -1,7 +1,5 @@
 <template>
   <view class="container">
-    <!-- 导航栏 -->
-    <CommonNavBar title="充电分析" :showBack="true" />
 
     <!-- 内容区域 -->
     <view class="content">
@@ -77,14 +75,14 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { getRecordsList } from '@/api/record';
   import { getMonthlyStatistics } from '@/api/statistics';
   import { formatDate, getCurrentDate, getRecordImageUrl, getPayload } from '@/utils';
   import { TIMESLOTS } from '@/config';
 
   export default {
-    components: { CommonNavBar },
+
     data() {
       return {
         TIMESLOTS,
@@ -186,7 +184,6 @@
 
   .content {
     padding: 20rpx;
-    padding-top: 0;
   }
 
   .month-bar-row {

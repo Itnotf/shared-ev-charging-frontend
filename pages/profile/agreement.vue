@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="用户协议" :showBack="true" />
 
     <!-- 内容区域 -->
     <view class="content">
@@ -105,9 +104,9 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   export default {
-    components: { CommonNavBar },
+
     data() {
       return {};
     },

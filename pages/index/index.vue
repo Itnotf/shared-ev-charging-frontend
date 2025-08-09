@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="充电共享" :rightClick="() => goTo('/pages/profile/index')" />
     <view class="content">
       <!-- 内容区域原有内容全部移入此处 -->
       <CommonCard customClass="card overview-card gradient-bg">
@@ -99,14 +98,13 @@
   import { getCurrentReservationStatus, cancelReservation } from '@/api/reservation';
   import { getMonthlyStatistics } from '@/api/statistics';
   import SvgIcon from '@/components/SvgIcon.vue';
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import CommonCard from '@/components/CommonCard.vue';
   import { checkAndFetchUserProfile } from '@/utils';
 
   export default {
     components: {
       SvgIcon,
-      CommonNavBar,
       CommonCard,
     },
     data() {

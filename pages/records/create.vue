@@ -1,8 +1,5 @@
 <template>
   <view class="container">
-    <!-- 导航栏 -->
-    <CommonNavBar title="上传记录" :showBack="true" />
-
     <!-- 内容区域 -->
     <view class="content">
       <!-- 无预约ID时的提示 -->
@@ -125,14 +122,12 @@
   } from '@/utils';
   import { TIMESLOTS, PRIMARY_COLOR } from '@/config';
   import { uploadFile } from '@/api/index';
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { getCurrentReservationStatus } from '@/api/reservation';
   import { getUserPrice } from '@/api/auth';
 
   export default {
-    components: {
-      CommonNavBar,
-    },
+
     data() {
       return {
         TIMESLOTS,
@@ -376,7 +371,6 @@
 
   .content {
     padding: 20rpx;
-    padding-top: 0;
   }
 
   .card {

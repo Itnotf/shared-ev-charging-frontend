@@ -1,7 +1,5 @@
 <template>
   <view class="container">
-    <!-- 导航栏 -->
-    <CommonNavBar title="编辑记录" :showBack="true" />
 
     <!-- 内容区域 -->
     <view class="content">
@@ -95,13 +93,11 @@
   import { formatDate, compressImage, getRecordImageUrl, getPayload } from '@/utils';
   import { TIMESLOTS } from '@/config';
   import { uploadFile } from '@/api/index';
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { getUserPrice } from '@/api/auth';
 
   export default {
-    components: {
-      CommonNavBar,
-    },
+
     data() {
       return {
         TIMESLOTS,
@@ -259,7 +255,6 @@
 
   .content {
     padding: 20rpx;
-    padding-top: 0;
   }
 
   .original-info-card {

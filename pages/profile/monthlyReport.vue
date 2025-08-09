@@ -1,6 +1,5 @@
 <template>
   <view class="monthly-report">
-    <CommonNavBar title="月度对账" :showBack="true" />
     <view class="content">
       <view class="month-picker-row">
         <picker mode="date" fields="month" :value="selectedMonth" @change="onMonthChange">
@@ -23,14 +22,14 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { getMonthlyReport } from '@/api/admin';
   import { getPayload, getAvatarUrl } from '@/utils';
 
   export default {
     name: 'MonthlyReport',
     components: {
-      CommonNavBar,
+
     },
     data() {
       return {

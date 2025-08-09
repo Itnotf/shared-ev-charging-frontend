@@ -1,8 +1,5 @@
 <template>
   <view class="container">
-    <!-- 导航栏 -->
-    <CommonNavBar title="记录详情" :showBack="true" />
-
     <!-- 内容区域 -->
     <view class="content">
       <!-- 图片展示区域 -->
@@ -82,13 +79,13 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { getRecordDetail } from '@/api/record';
   import { formatDate, getRecordImageUrl, getFullImageUrl, getPayload } from '@/utils';
   import { TIMESLOTS } from '@/config';
 
   export default {
-    components: { CommonNavBar },
+
     data() {
       return {
         TIMESLOTS,
@@ -187,7 +184,6 @@
 
   .content {
     padding: 20rpx;
-    padding-top: 0;
   }
 
   .image-section {

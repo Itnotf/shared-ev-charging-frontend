@@ -1,6 +1,5 @@
 <template>
   <view class="container">
-    <CommonNavBar title="完善头像昵称" :showBack="true" />
     <view class="content-card">
       <view class="avatar-section">
         <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar" class="avatar-btn">
@@ -31,14 +30,14 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { userAuth } from '@/utils/index';
   import { syncUserProfile, uploadFile } from '@/api';
   import { getAvatarUrl } from '@/utils';
   // import { baseUrl } from '@/config'; // 未使用，已注释
 
   export default {
-    components: { CommonNavBar },
+
     data() {
       return {
         avatarUrl: '', // 只存相对路径

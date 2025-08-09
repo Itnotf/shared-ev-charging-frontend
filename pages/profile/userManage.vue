@@ -1,6 +1,5 @@
 <template>
   <view class="user-manage">
-    <CommonNavBar title="用户管理" :showBack="true" />
 
     <view class="content">
       <view class="user-list">
@@ -52,7 +51,7 @@
 </template>
 
 <script>
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import { getAllUsers, updateUserPrice, updateUserReserve } from '@/api/admin';
   import { getPayload, getAvatarUrl } from '@/utils';
   import { SUCCESS_COLOR } from '@/config';
@@ -60,7 +59,7 @@
   export default {
     name: 'UserManage',
     components: {
-      CommonNavBar,
+
     },
     data() {
       return {

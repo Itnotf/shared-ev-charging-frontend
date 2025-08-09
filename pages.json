@@ -3,113 +3,97 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "馨澜美邻",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "澜充小站"
       }
     },
     {
       "path": "pages/login/login",
       "style": {
-        "navigationBarTitleText": "登录",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "登录"
       }
     },
     {
       "path": "pages/reservations/index",
       "style": {
-        "navigationBarTitleText": "预约充电",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "预约充电"
       }
     },
     {
       "path": "pages/records/index",
       "style": {
-        "navigationBarTitleText": "充电记录",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "充电分析"
       }
     },
     {
       "path": "pages/records/create",
       "style": {
-        "navigationBarTitleText": "上传记录",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "上传记录"
       }
     },
     {
       "path": "pages/records/list",
       "style": {
-        "navigationBarTitleText": "充电记录",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "充电记录"
       }
     },
     {
       "path": "pages/records/detail",
       "style": {
-        "navigationBarTitleText": "记录详情",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "记录详情"
       }
     },
     {
       "path": "pages/records/edit",
       "style": {
-        "navigationBarTitleText": "编辑记录",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "编辑记录"
       }
     },
     {
       "path": "pages/profile/index",
       "style": {
-        "navigationBarTitleText": "个人中心",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "个人中心"
       }
     },
     {
       "path": "pages/profile/notification",
       "style": {
-        "navigationBarTitleText": "通知设置",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "通知设置"
       }
     },
     {
       "path": "pages/profile/about",
       "style": {
-        "navigationBarTitleText": "关于小程序",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "关于小程序"
       }
     },
     {
       "path": "pages/profile/agreement",
       "style": {
-        "navigationBarTitleText": "用户协议",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "用户协议"
       }
     },
     {
       "path": "pages/profile/privacy",
       "style": {
-        "navigationBarTitleText": "隐私政策",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "隐私政策"
       }
     },
     {
       "path": "pages/profile/fillUserInfo",
       "style": {
-        "navigationBarTitleText": "完善头像昵称",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "完善头像昵称"
       }
     },
     {
       "path": "pages/profile/userManage",
       "style": {
-        "navigationBarTitleText": "用户管理",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "用户管理"
       }
     },
     {
       "path": "pages/profile/monthlyReport",
       "style": {
-        "navigationBarTitleText": "月度对账",
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "月度对账"
       }
     }
   ],

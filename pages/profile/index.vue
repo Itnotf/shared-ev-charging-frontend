@@ -1,8 +1,5 @@
 <template>
   <view class="container">
-    <!-- 导航栏 -->
-    <CommonNavBar title="个人中心" :showBack="false" />
-
     <!-- 头像卡片 -->
     <view class="content">
       <view class="profile-header" @click="goTo('/pages/profile/fillUserInfo')">
@@ -71,13 +68,13 @@
 
 <script>
   import { getUserProfile } from '@/api/auth';
-  import CommonNavBar from '@/components/CommonNavBar.vue';
+
   import BaseGroup from '@/components/BaseGroup.vue';
   import BaseGroupItem from '@/components/BaseGroupItem.vue';
   import { goTo, getAvatarUrl, getPayload } from '@/utils';
 
   export default {
-    components: { CommonNavBar, BaseGroup, BaseGroupItem },
+    components: { BaseGroup, BaseGroupItem },
     data() {
       return {
         userInfo: {
@@ -228,6 +225,7 @@
     min-height: 100vh;
     background: $bg;
   }
+
   .profile-header {
     display: flex;
     align-items: center;

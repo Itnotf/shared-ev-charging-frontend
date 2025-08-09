@@ -51,7 +51,7 @@
 
 ## 主要组件
 
-- **CommonNavBar**：自定义导航栏，支持返回/右侧按钮
+
 - **CommonCard**：卡片容器，统一样式
 - **SvgIcon**：SVG图标组件，支持 uni-icons 或自定义svg
 - **BaseGroup/BaseGroupItem**：分组列表及项，常用于个人中心
