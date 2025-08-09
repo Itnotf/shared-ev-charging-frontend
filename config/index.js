@@ -24,3 +24,4 @@ export const TIMESLOTS = {
 // 主题颜色常量（用于组件 props 绑定，避免模板硬编码颜色）
 export const PRIMARY_COLOR = '#FFA500';
 export const SUCCESS_COLOR = '#67C23A';
+export const INFO_COLOR = '#409EFF';

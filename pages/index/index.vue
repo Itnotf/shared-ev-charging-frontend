@@ -67,10 +67,10 @@
           v-for="item in functionList"
           :key="item.title"
           class="function-item-new"
-          :style="{ background: item.bgColor }"
+          :class="item.bgClass"
           @click="item.onClick"
         >
-          <view class="function-icon-bg-new" :style="{ background: item.bgColor }">
+          <view class="function-icon-bg-new" :class="item.bgClass">
             <SvgIcon
               :name="item.icon"
               size="56"
@@ -94,7 +94,7 @@
     getAvatarUrl,
     getPayload,
   } from '@/utils';
-  import { TIMESLOTS } from '@/config';
+  import { TIMESLOTS, PRIMARY_COLOR } from '@/config';
   import { getCurrentReservationStatus, cancelReservation } from '@/api/reservation';
   import { getMonthlyStatistics } from '@/api/statistics';
   import SvgIcon from '@/components/SvgIcon.vue';
@@ -117,34 +117,34 @@
         selectedMonth: '',
         currentReservation: null,
         pollingTimer: null,
-        // 宫格功能项配置，包含背景色和icon色
+        // 宫格功能项配置，使用样式类以避免硬编码颜色
         functionList: [
           {
             title: '充电预约',
             icon: 'calendar',
-            bgColor: '#FFF7E6',
-            iconColor: '#FFA500',
+            bgClass: 'bg-soft-1',
+            iconColor: PRIMARY_COLOR,
             onClick: () => goTo('/pages/reservations/index'),
           },
           {
             title: '电量上传',
             icon: 'camera',
-            bgColor: '#FFFBEA',
-            iconColor: '#D46B08',
+            bgClass: 'bg-soft-2',
+            iconColor: PRIMARY_COLOR,
             onClick: () => goTo('/pages/records/create'),
           },
           {
             title: '充电记录',
             icon: 'list',
-            bgColor: '#FFF9F0',
-            iconColor: '#FF9900',
+            bgClass: 'bg-soft-3',
+            iconColor: PRIMARY_COLOR,
             onClick: () => goTo(`/pages/records/list?month=${this.selectedMonth}`),
           },
           {
             title: '电量分析',
             icon: 'compose',
-            bgColor: '#FFF3E0',
-            iconColor: '#FFB84D',
+            bgClass: 'bg-soft-4',
+            iconColor: PRIMARY_COLOR,
             onClick: () => goTo(`/pages/records/index?month=${this.selectedMonth}`),
           },
         ],
@@ -251,7 +251,7 @@
           uni.showModal({
             title: '提示',
             content: '确定要取消当前预约吗？',
-            confirmColor: '#FFA500',
+            confirmColor: PRIMARY_COLOR,
             success: (r) => resolve(r),
           });
         });
@@ -325,7 +325,7 @@
   .reservation-card,
   .empty-reservation-card {
     border-radius: $card-radius;
-    background: #fff;
+    background: $uni-bg-color;
     box-shadow: $card-shadow;
     margin-bottom: $card-margin;
     padding: 0;
@@ -337,7 +337,7 @@
 
   .overview-card {
     border-top: 8rpx solid $main-color;
-    background: linear-gradient(135deg, #fffdf7 0%, #fff7e6 100%);
+    background: $main-color-bg1;
     min-height: 140rpx;
     height: 20vh;
     max-height: 300rpx;
@@ -355,9 +355,9 @@
   }
 
   .gradient-bg {
-    background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
+    background: $main-color-bg1;
     border: none;
-    box-shadow: 0 4rpx 24rpx rgba(255, 165, 0, 0.1);
+    box-shadow: $charging-shadow-md;
   }
 
   .card-header {
@@ -382,13 +382,13 @@
     justify-content: center;
     padding: 0 24rpx;
     height: 56rpx;
-    background: #fff7e6;
-    border: 2rpx solid #ffa500;
+    background: $main-color-lighter;
+    border: 2rpx solid $uni-color-primary;
     border-radius: 28rpx;
     font-size: 30rpx;
-    color: #ffa500;
+    color: $main-color-dark;
     font-weight: bold;
-    box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.08);
+    box-shadow: $charging-shadow-sm;
     cursor: pointer;
     position: relative;
   }
@@ -400,7 +400,7 @@
     height: 0;
     border-left: 10rpx solid transparent;
     border-right: 10rpx solid transparent;
-    border-top: 10rpx solid #ffa500;
+    border-top: 10rpx solid $uni-color-primary;
   }
   .card-header-flex .card-title {
     flex: 1;
@@ -452,7 +452,7 @@
   .data-value.big.blue-color {
     font-size: 56rpx;
     font-weight: bold;
-    color: #0057b7;
+    color: $uni-color-info;
     margin-bottom: 4rpx;
   }
 
@@ -490,22 +490,22 @@
     height: 64rpx;
     border-radius: 50%;
     margin-right: 20rpx;
-    background: #f0f0f0;
+    background: $uni-bg-color-hover;
     object-fit: cover;
-    border: 2rpx solid #ffa500;
+    border: 2rpx solid $uni-color-primary;
   }
   .avatar-default {
     width: 64rpx;
     height: 64rpx;
     border-radius: 50%;
     margin-right: 20rpx;
-    background: #f0f0f0;
+    background: $uni-bg-color-hover;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 40rpx;
-    color: #ffa500;
-    border: 2rpx solid #ffa500;
+    color: $uni-color-primary;
+    border: 2rpx solid $uni-color-primary;
   }
   .reservation-detail {
     flex: 1;
@@ -517,21 +517,21 @@
   .reservation-user {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: $text-main;
   }
   .reservation-meta {
     font-size: 26rpx;
-    color: #888;
+    color: $text-sub;
     display: flex;
     padding-top: 16rpx;
     gap: 16rpx;
   }
   .reservation-slot {
-    color: #ffa500;
+    color: $uni-color-primary;
     font-weight: bold;
   }
   .cancel-reservation-btn {
-    background: #fff;
+    background: $uni-bg-color;
     color: $main-color-dark;
     border: 2rpx solid $main-color-dark;
     border-radius: 24rpx;
@@ -539,7 +539,7 @@
     font-weight: bold;
     padding: 8rpx 24rpx;
     margin-left: 16rpx;
-    box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.08);
+    box-shadow: $charging-shadow-sm;
     transition:
       background 0.2s,
       color 0.2s,
@@ -547,16 +547,16 @@
   }
   .cancel-reservation-btn:active {
     background: $main-color-dark;
-    color: #fff;
-    box-shadow: 0 4rpx 16rpx rgba(212, 107, 8, 0.15);
+    color: $uni-text-color-inverse;
+    box-shadow: $charging-shadow-md;
   }
   .empty-reservation-card {
     min-height: 160rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 2rpx dashed #ffa500;
+    background: $uni-bg-color;
+    border: 2rpx dashed $uni-color-primary;
     box-shadow: none;
     padding: 28rpx 24rpx;
   }
@@ -570,18 +570,18 @@
   }
   .empty-text {
     font-size: 28rpx;
-    color: #ffa500;
+    color: $uni-color-primary;
     margin-bottom: 16rpx;
   }
   .go-reservation-btn {
-    background: linear-gradient(90deg, #ffa500 0%, #ffb84d 100%);
-    color: #fff;
+    background: $charging-gradient-primary;
+    color: $uni-text-color-inverse;
     border: none;
     border-radius: 24rpx;
     font-size: 26rpx;
     font-weight: bold;
     padding: 8rpx 32rpx;
-    box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.1);
+    box-shadow: $charging-shadow-sm;
     transition: opacity 0.2s;
   }
   .go-reservation-btn:active {
@@ -591,26 +591,26 @@
   button,
   .card-more-btn,
   .go-reservation-btn {
-    background: linear-gradient(90deg, #ffa500 0%, #ffb84d 100%);
-    color: #fff;
+    background: $charging-gradient-primary;
+    color: $uni-text-color-inverse;
     border: none;
     border-radius: 24rpx;
     font-size: 28rpx;
     font-weight: bold;
     padding: 12rpx 36rpx;
-    box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.1);
+    box-shadow: $charging-shadow-sm;
     transition: opacity 0.2s;
   }
   button:disabled,
   .card-more-btn:disabled,
   .go-reservation-btn:disabled {
-    background: #e0e0e0;
-    color: #aaa;
+    background: $uni-bg-color-hover;
+    color: $uni-text-color-disable;
     box-shadow: none;
   }
   .slot-tag {
-    background: #ffa500;
-    color: #fff;
+    background: $uni-color-primary;
+    color: $uni-text-color-inverse;
     border-radius: 12rpx;
     padding: 2rpx 12rpx;
     font-size: 22rpx;
@@ -658,7 +658,7 @@
   }
   .function-title-new {
     font-size: 28rpx;
-    color: #333;
+    color: $text-main;
     font-weight: bold;
     margin-top: 0;
   }
@@ -699,16 +699,30 @@
   button:active,
   .card-more-btn:active,
   .go-reservation-btn:active {
-    background: linear-gradient(90deg, #d46b08 0%, #ffa500 100%);
-    color: #fff;
+    background: $charging-gradient-primary;
+    color: $uni-text-color-inverse;
     transform: scale(0.97);
-    box-shadow: 0 8rpx 24rpx rgba(212, 107, 8, 0.15);
+    box-shadow: $charging-shadow-md;
   }
   // 主要数据色彩更深
   .data-value.big.main-color {
     color: $main-color-deep;
   }
   .data-value.big.blue-color {
-    color: #0057b7;
+    color: $uni-color-info;
+  }
+
+  // 功能宫格背景柔和橙色系（统一变量）
+  .bg-soft-1 {
+    background: $main-color-bg1;
+  }
+  .bg-soft-2 {
+    background: $main-color-bg2;
+  }
+  .bg-soft-3 {
+    background: $main-color-bg3;
+  }
+  .bg-soft-4 {
+    background: $main-color-lightest;
   }
 </style>

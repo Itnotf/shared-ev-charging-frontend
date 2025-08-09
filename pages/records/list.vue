@@ -183,13 +183,13 @@
   }
 
   .content {
-    padding: 20rpx;
+    padding: 16rpx;
   }
 
   .month-bar-row {
     display: flex;
     align-items: center;
-    padding: 24rpx 32rpx 0 32rpx;
+    padding: 16rpx 20rpx 0 20rpx;
     font-size: 30rpx;
     color: $uni-color-primary;
     font-weight: bold;
@@ -231,8 +231,8 @@
     background: $white;
     border-radius: 20rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
-    margin: 16rpx 20rpx 20rpx 20rpx;
-    padding: 24rpx 20rpx;
+    margin: 12rpx 20rpx 16rpx 20rpx;
+    padding: 20rpx 16rpx;
   }
 
   .stats-header {
@@ -273,14 +273,14 @@
     border-radius: 20rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
     margin: 0 20rpx;
-    padding: 24rpx 20rpx;
+    padding: 20rpx 16rpx;
   }
 
   .records-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20rpx;
+    margin-bottom: 16rpx;
   }
 
   .records-title {
@@ -297,14 +297,14 @@
   .records-list {
     display: flex;
     flex-direction: column;
-    gap: 16rpx;
+    gap: 12rpx;
   }
 
   .record-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: $uni-spacing-col-base;
+    padding: 24rpx 20rpx;
     background: $uni-bg-color-hover;
     border-radius: $uni-border-radius-base;
     border: 1rpx solid $uni-border-color;
@@ -395,7 +395,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 80rpx 0;
+    padding: 60rpx 0;
   }
 
   .empty-text {

@@ -87,7 +87,7 @@
       <view class="records-list">
         <view v-for="day in groupedRecords" :key="day.date" class="record-day-card one-line-row">
           <view class="record-day-header one-line-header">
-            <SvgIcon name="calendar" size="24" color="#FFA500" />
+            <SvgIcon name="calendar" size="24" :color="PRIMARY_COLOR" />
             <text class="record-day-date">{{ formatDay(day.date) }}</text>
             <view class="record-shifts">
               <view class="shift-item day">
@@ -118,7 +118,7 @@
   import { /* formatDate, */ getPayload } from '@/utils'; // formatDate 未使用
   import { getCurrentDate } from '@/utils';
   import qiunDataCharts from '@/uni_modules/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue';
-  import { TIMESLOTS } from '@/config';
+  import { TIMESLOTS, PRIMARY_COLOR, INFO_COLOR } from '@/config';
 
   export default {
     components: { SvgIcon, qiunDataCharts },
@@ -140,7 +140,7 @@
         shiftPie: null, // { dayKwh, nightKwh, totalKwh }
         pieData: {},
         pieOpts: {
-          color: ['#FFA500', '#409EFF'],
+          color: [PRIMARY_COLOR, INFO_COLOR],
           legend: { show: false },
           extra: {
             pie: {
@@ -323,9 +323,9 @@
   .month-bar-row {
     display: flex;
     align-items: center;
-    padding: 24rpx 32rpx 0 32rpx;
+    padding: 16rpx 20rpx 0 20rpx;
     font-size: 30rpx;
-    color: #ffa500;
+    color: $uni-color-primary;
     font-weight: bold;
     cursor: pointer;
     position: relative;
@@ -338,13 +338,13 @@
     padding: 0 24rpx;
     height: 56rpx;
     min-width: 120rpx;
-    background: #fff7e6;
-    border: 2rpx solid #ffa500;
+    background: $main-color-lighter;
+    border: 2rpx solid $uni-color-primary;
     border-radius: 28rpx;
     font-size: 30rpx;
-    color: #ffa500;
+    color: $main-color-dark;
     font-weight: bold;
-    box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.08);
+    box-shadow: $charging-shadow-sm;
     cursor: pointer;
     position: relative;
   }
@@ -356,38 +356,38 @@
     height: 0;
     border-left: 10rpx solid transparent;
     border-right: 10rpx solid transparent;
-    border-top: 10rpx solid #ffa500;
+    border-top: 10rpx solid $uni-color-primary;
   }
   .chart-card {
-    background: #fff;
+    background: $uni-bg-color;
     border-radius: 20rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
-    margin: 16rpx 20rpx 0 20rpx;
-    padding: 24rpx 20rpx; // 统一padding，减小顶部间距
+    margin: 12rpx 20rpx 0 20rpx;
+    padding: 20rpx 16rpx;
   }
   .chart-title {
     font-size: 28rpx;
-    color: #333;
+    color: $text-main;
     font-weight: bold;
     margin-bottom: 16rpx;
   }
   .card-title {
     font-size: 28rpx;
     font-weight: bold;
-    color: #333;
-    margin-bottom: 12rpx;
-    padding: 0 12rpx; // 统一标题内边距
+    color: $text-main;
+    margin-bottom: 16rpx;
+    padding: 0;
   }
   .shift-pie-card .card-title {
     font-size: 28rpx;
-    margin-bottom: 12rpx;
+    margin-bottom: 16rpx;
   }
   .chart-bar-group {
     display: flex;
     align-items: flex-end;
     height: 180rpx;
-    margin-bottom: 8rpx;
-    padding-bottom: 36rpx; // 为标签留空间
+    margin-bottom: 12rpx;
+    padding-bottom: 32rpx;
   }
   .chart-bar-item {
     display: flex;
@@ -397,7 +397,7 @@
   }
   .chart-bar {
     width: 36rpx; // 原为24rpx，增大宽度
-    background: linear-gradient(135deg, #ffa500 0%, #ffb84d 100%);
+    background: $charging-gradient-primary;
     border-radius: 8rpx 8rpx 0 0;
     transition: height 0.2s;
   }
@@ -407,30 +407,30 @@
     left: 50%;
     transform: translateX(-50%) rotate(-45deg);
     font-size: 20rpx;
-    color: #888;
+    color: $text-sub;
     min-width: 40rpx;
     text-align: center;
     white-space: nowrap;
     display: block;
   }
   .chart-empty {
-    color: #aaa;
+    color: $uni-text-color-disable;
     font-size: 24rpx;
     text-align: center;
     padding: 32rpx 0;
   }
   .records-list {
-    margin: 24rpx 20rpx 0 20rpx;
+    margin: 16rpx 20rpx 0 20rpx;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
   }
   .record-day-card {
-    background: #fff;
+    background: $uni-bg-color;
     border-radius: 20rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
-    margin-bottom: 12rpx;
-    padding: 16rpx 12rpx;
+    margin-bottom: 8rpx;
+    padding: 12rpx 16rpx;
   }
   .record-day-header {
     display: flex;
@@ -440,17 +440,17 @@
   }
   .record-day-date {
     font-size: 24rpx;
-    color: #333;
+    color: $text-main;
     font-weight: bold;
   }
   .record-day-kwh {
     margin-left: auto;
     font-size: 22rpx;
-    color: #ffa500;
+    color: $uni-color-primary;
     font-weight: bold;
   }
   .empty-state {
-    color: #aaa;
+    color: $uni-text-color-disable;
     font-size: 28rpx;
     text-align: center;
     padding: 80rpx 0;
@@ -459,8 +459,8 @@
     position: absolute;
     top: -60rpx;
     min-width: 100rpx;
-    background: #fff;
-    color: #ffa500;
+    background: $uni-bg-color;
+    color: $uni-color-primary;
     border-radius: 12rpx;
     box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
     padding: 8rpx 16rpx;
@@ -483,9 +483,9 @@
     justify-content: flex-start;
     width: 100%;
     min-height: 200rpx;
-    padding-left: 100rpx; // 增加左边间距
-    margin-top: 40rpx; // 增加上面间距
-    margin-bottom: 16rpx;
+    padding-left: 60rpx;
+    margin-top: 20rpx;
+    margin-bottom: 12rpx;
   }
   .shift-pie-flex.compact {
     gap: 16rpx;
@@ -506,7 +506,7 @@
     flex-direction: column;
     gap: 8rpx;
     font-size: 22rpx;
-    color: #666;
+    color: $text-sub;
     flex: 1;
     margin-left: 65px;
   }
@@ -528,10 +528,10 @@
     margin-right: 4rpx;
   }
   .legend-dot.day {
-    background: #ffa500;
+    background: $uni-color-primary;
   }
   .legend-dot.night {
-    background: #409eff;
+    background: $uni-color-info;
   }
   .record-list-card {
     flex: 1;
@@ -543,7 +543,7 @@
   .one-line-row {
     padding: 16rpx 12rpx;
     margin-bottom: 12rpx;
-    background: #fff;
+    background: $uni-bg-color;
     border-radius: 20rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
   }
@@ -555,7 +555,7 @@
   }
   .record-day-date {
     font-size: 24rpx;
-    color: #333;
+    color: $text-main;
     font-weight: bold;
     margin-right: 12rpx;
   }
@@ -575,16 +575,16 @@
     font-weight: bold;
   }
   .shift-item.day {
-    background: #fff7e6;
-    color: #ffa500;
+    background: $main-color-lighter;
+    color: $uni-color-primary;
   }
   .shift-item.night {
-    background: #e6f0ff;
-    color: #409eff;
+    background: rgba(64, 158, 255, 0.12);
+    color: $uni-color-info;
   }
   .shift-item.total {
-    background: #f5f5f5;
-    color: #222;
+    background: $uni-bg-color-hover;
+    color: $uni-text-color;
   }
   .shift-value {
     margin-right: 0;
