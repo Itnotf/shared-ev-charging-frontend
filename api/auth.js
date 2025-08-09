@@ -5,7 +5,7 @@ export const wxLogin = (data) => {
   return http({
     url: '/api/auth/login',
     method: 'POST',
-    data
+    data,
   });
 };
 
@@ -13,7 +13,7 @@ export const wxLogin = (data) => {
 export const getUserProfile = () => {
   return http({
     url: '/api/users/profile',
-    method: 'GET'
+    method: 'GET',
   });
 };
 
@@ -21,7 +21,7 @@ export const getUserProfile = () => {
 export const logout = () => {
   return http({
     url: '/api/auth/logout',
-    method: 'POST'
+    method: 'POST',
   });
 };
 
@@ -29,6 +29,6 @@ export const logout = () => {
 export const getUserPrice = () => {
   return http({
     url: '/api/users/price',
-    method: 'GET'
+    method: 'GET',
   });
-}; 
+};

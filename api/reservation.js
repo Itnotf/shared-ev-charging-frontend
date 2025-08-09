@@ -5,7 +5,7 @@ export const getReservations = (date) => {
   return http({
     url: '/api/reservations',
     method: 'GET',
-    data: date ? { date } : {}
+    data: date ? { date } : {},
   });
 };
 
@@ -14,7 +14,7 @@ export const createReservation = (data) => {
   return http({
     url: '/api/reservations',
     method: 'POST',
-    data
+    data,
   });
 };
 
@@ -22,7 +22,7 @@ export const createReservation = (data) => {
 export const cancelReservation = (id) => {
   return http({
     url: `/api/reservations/${id}`,
-    method: 'DELETE'
+    method: 'DELETE',
   });
 };
 
@@ -30,6 +30,6 @@ export const cancelReservation = (id) => {
 export const getCurrentReservationStatus = () => {
   return http({
     url: '/api/reservations/current-status',
-    method: 'GET'
+    method: 'GET',
   });
-}; 
+};

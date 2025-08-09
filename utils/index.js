@@ -2,6 +2,19 @@ import { cancelReservation } from '@/api/reservation';
 import { syncUserProfile } from '@/api';
 import { baseUrl } from '@/config';
 
+// 统一解包接口返回：支持 res.data.data、res.data、或本体
+export const getPayload = (response) => {
+  if (response && typeof response === 'object') {
+    if (response.data && typeof response.data === 'object') {
+      if (Object.prototype.hasOwnProperty.call(response.data, 'data')) {
+        return response.data.data;
+      }
+      return response.data;
+    }
+  }
+  return response;
+};
+
 // 日期格式化
 export const formatDate = (date, format = 'YYYY-MM-DD') => {
   if (!date) return '';
@@ -35,9 +48,9 @@ export const formatNumber = (num) => {
 // 获取状态标签样式
 export const getStatusStyle = (status) => {
   const styles = {
-    'paid': { color: '#67C23A', background: '#F0F9EB' },     // 已支付
-    'pending': { color: '#E6A23C', background: '#FDF6EC' },  // 待支付
-    'cancelled': { color: '#909399', background: '#F4F4F5' } // 已取消
+    paid: { color: '#67C23A', background: '#F0F9EB' }, // 已支付
+    pending: { color: '#E6A23C', background: '#FDF6EC' }, // 待支付
+    cancelled: { color: '#909399', background: '#F4F4F5' }, // 已取消
   };
   return styles[status] || { color: '#909399', background: '#F4F4F5' };
 };
@@ -45,25 +58,28 @@ export const getStatusStyle = (status) => {
 // 认证相关工具对象
 export const userAuth = {
   save(token, userInfo) {
-  uni.setStorageSync('token', token);
-  uni.setStorageSync('userInfo', typeof userInfo === 'string' ? userInfo : JSON.stringify(userInfo));
+    uni.setStorageSync('token', token);
+    uni.setStorageSync(
+      'userInfo',
+      typeof userInfo === 'string' ? userInfo : JSON.stringify(userInfo)
+    );
   },
   get() {
-  const token = uni.getStorageSync('token');
-  const userInfoStr = uni.getStorageSync('userInfo');
-  if (!token || !userInfoStr) return null;
-  try {
-    const userInfo = typeof userInfoStr === 'object' ? userInfoStr : JSON.parse(userInfoStr);
-    return { token, userInfo };
-  } catch (e) {
-    console.error('Parse userInfo error:', e);
+    const token = uni.getStorageSync('token');
+    const userInfoStr = uni.getStorageSync('userInfo');
+    if (!token || !userInfoStr) return null;
+    try {
+      const userInfo = typeof userInfoStr === 'object' ? userInfoStr : JSON.parse(userInfoStr);
+      return { token, userInfo };
+    } catch (e) {
+      console.error('Parse userInfo error:', e);
       this.clear();
-    return null;
-  }
+      return null;
+    }
   },
   clear() {
-  uni.removeStorageSync('token');
-  uni.removeStorageSync('userInfo');
+    uni.removeStorageSync('token');
+    uni.removeStorageSync('userInfo');
   },
   check() {
     return !!this.get();
@@ -71,13 +87,13 @@ export const userAuth = {
   getRole() {
     const auth = this.get();
     return auth ? auth.userInfo.role : null;
-  }
+  },
 };
 
 export const redirectToLogin = (message = '请先登录') => {
   uni.showToast({
     title: message,
-    icon: 'none'
+    icon: 'none',
   });
   setTimeout(() => {
     uni.navigateTo({ url: '/pages/login/login' });
@@ -93,50 +109,50 @@ export const getWeekday = (dateStr) => {
 
 // 私有函数：上传记录弹窗
 function showUploadRecordModal(data, goTo, cancelReservation) {
-      uni.showModal({
-        title: '温馨提示',
-        content: '您有上次充电记录未上传，请先上传或选择未充电取消本次预约！',
-        showCancel: true,
-        confirmText: '去上传',
-        cancelText: '取消预约',
-        success: (res) => {
-          if (res.confirm) {
-            if (data.lastReservation) {
-              const date = data.lastReservation.date ? data.lastReservation.date.slice(0, 10) : '';
-              const url = `/pages/records/create?id=${data.lastReservation.id}&date=${date}&timeslot=${data.lastReservation.timeslot}`;
+  uni.showModal({
+    title: '温馨提示',
+    content: '您有上次充电记录未上传，请先上传或选择未充电取消本次预约！',
+    showCancel: true,
+    confirmText: '去上传',
+    cancelText: '取消预约',
+    success: (res) => {
+      if (res.confirm) {
+        if (data.lastReservation) {
+          const date = data.lastReservation.date ? data.lastReservation.date.slice(0, 10) : '';
+          const url = `/pages/records/create?id=${data.lastReservation.id}&date=${date}&timeslot=${data.lastReservation.timeslot}`;
           goTo(url);
-            } else {
+        } else {
           goTo('/pages/records/create');
-            }
-          } else if (res.cancel) {
-            uni.showModal({
-              title: '确认取消',
-              content: '确定本次预约未充电并取消吗？',
-              confirmText: '确定取消',
-              cancelText: '我再想想',
+        }
+      } else if (res.cancel) {
+        uni.showModal({
+          title: '确认取消',
+          content: '确定本次预约未充电并取消吗？',
+          confirmText: '确定取消',
+          cancelText: '我再想想',
           success: async (res2) => {
-                if (res2.confirm && data.lastReservation) {
-                  uni.showLoading({ title: '取消中' });
+            if (res2.confirm && data.lastReservation) {
+              uni.showLoading({ title: '取消中' });
               try {
                 await cancelReservation(data.lastReservation.id);
-                    uni.hideLoading();
-                    uni.showToast({ title: '已取消预约', icon: 'success' });
+                uni.hideLoading();
+                uni.showToast({ title: '已取消预约', icon: 'success' });
                 // 关键：取消后立即刷新 current-status，避免再次弹窗
                 if (typeof getCurrentReservationStatus === 'function') {
-                  const res = await getCurrentReservationStatus();
+                  const _res = await getCurrentReservationStatus();
                   // 不再自动弹窗，用户可手动操作
                 }
               } catch {
-                    uni.hideLoading();
-                    uni.showToast({ title: '取消失败', icon: 'none' });
+                uni.hideLoading();
+                uni.showToast({ title: '取消失败', icon: 'none' });
               }
-                } else if (res2.cancel) {
+            } else if (res2.cancel) {
               showUploadRecordModal(data, goTo, cancelReservation);
-                }
-              }
-            });
+            }
+          },
+        });
       }
-    }
+    },
   });
 }
 
@@ -150,7 +166,7 @@ export const checkAndHandleNeedUploadRecord = (data) => {
     return true;
   }
   return false;
-}; 
+};
 
 /**
  * 全局统一跳转方法，自动判断tabBar页面，后续可扩展埋点、权限等
@@ -159,7 +175,7 @@ export const checkAndHandleNeedUploadRecord = (data) => {
 export const goTo = (url) => {
   const tabBarPages = [
     '/pages/index/index',
-    '/pages/profile/index'
+    '/pages/profile/index',
     // 只保留 pages.json 里 tabBar 配置的页面
   ];
   if (tabBarPages.includes(url.split('?')[0])) {
@@ -167,7 +183,7 @@ export const goTo = (url) => {
   } else {
     uni.navigateTo({ url });
   }
-}; 
+};
 
 export const checkAndFetchUserProfile = async () => {
   const userInfoRaw = uni.getStorageSync('userInfo');
@@ -181,27 +197,27 @@ export const checkAndFetchUserProfile = async () => {
   // 检查用户信息是否存在且包含头像
   const hasAvatar = userInfo?.user_avatar || userInfo?.avatar;
   if (!userInfo || !hasAvatar || hasAvatar === '') {
-      uni.showModal({
-        title: '获取头像和昵称',
+    uni.showModal({
+      title: '获取头像和昵称',
       content: '为了提供更好的个性化体验，请完善您的头像和昵称。',
       confirmText: '去填写',
       showCancel: false,
-        success: (res) => {
-          if (res.confirm) {
+      success: (res) => {
+        if (res.confirm) {
           goTo('/pages/profile/fillUserInfo');
-                }
-      }
+        }
+      },
     });
     return false;
   }
   return true;
 };
 
-const syncUserInfo = async (userInfo) => {
+const _syncUserInfo = async (userInfo) => {
   try {
-    const response = await syncUserProfile({
+    await syncUserProfile({
       avatarUrl: userInfo.avatarUrl,
-      nickName: userInfo.nickName
+      nickName: userInfo.nickName,
     });
   } catch (error) {
     // 静默处理错误
@@ -210,7 +226,7 @@ const syncUserInfo = async (userInfo) => {
 
 // 图片压缩
 export const compressImage = (filePath, quality = 0.8) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     uni.compressImage({
       src: filePath,
       quality: quality,
@@ -218,17 +234,17 @@ export const compressImage = (filePath, quality = 0.8) => {
         resolve(res.tempFilePath);
       },
       fail: (err) => {
-        console.log('图片压缩失败:', err);
+        console.error('图片压缩失败:', err);
         // 压缩失败时返回原图片
         resolve(filePath);
-      }
+      },
     });
   });
 };
 
 // 生成缩略图
-export const generateThumbnail = (filePath, width = 100, height = 100) => {
-  return new Promise((resolve, reject) => {
+export const generateThumbnail = (filePath, _width = 100, _height = 100) => {
+  return new Promise((resolve) => {
     uni.compressImage({
       src: filePath,
       quality: 0.6,
@@ -236,30 +252,26 @@ export const generateThumbnail = (filePath, width = 100, height = 100) => {
         resolve(res.tempFilePath);
       },
       fail: (err) => {
-        console.log('缩略图生成失败:', err);
+        console.error('缩略图生成失败:', err);
         resolve(filePath);
-      }
+      },
     });
   });
-}; 
+};
 
 // 图片URL处理工具函数
 export const getFullImageUrl = (path) => {
   if (!path) {
-    console.log('[getFullImageUrl] path 为空');
     return '';
   }
   if (/^https?:\/\//.test(path)) {
-    console.log('[getFullImageUrl] 已是完整URL:', path);
     return path;
   }
   if (path.startsWith('/')) {
     const url = `${baseUrl}${path}`;
-    console.log('[getFullImageUrl] 相对路径拼接:', path, '=>', url);
     return url;
   }
   const url = `${baseUrl}/${path}`;
-  console.log('[getFullImageUrl] 补斜杠拼接:', path, '=>', url);
   return url;
 };
 
@@ -291,7 +303,7 @@ export const fetchAndCacheImage = (url) => {
           resolve(getFullImageUrl(url));
         }
       },
-      fail: () => resolve(getFullImageUrl(url))
+      fail: () => resolve(getFullImageUrl(url)),
     });
   });
 };
@@ -308,4 +320,4 @@ export const getAvatarUrl = (avatarPath) => {
 export const getRecordImageUrl = (imagePath) => {
   if (!imagePath) return '';
   return getCachedImageUrl(imagePath);
-}; 
+};

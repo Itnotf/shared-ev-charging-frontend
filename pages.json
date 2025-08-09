@@ -1,147 +1,147 @@
 {
-	"pages": [
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "馨澜美邻",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/reservations/index",
-			"style": {
-				"navigationBarTitleText": "预约充电",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/records/index",
-			"style": {
-				"navigationBarTitleText": "充电记录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/records/create",
-			"style": {
-				"navigationBarTitleText": "上传记录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/records/list",
-			"style": {
-				"navigationBarTitleText": "充电记录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/records/detail",
-			"style": {
-				"navigationBarTitleText": "记录详情",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/records/edit",
-			"style": {
-				"navigationBarTitleText": "编辑记录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/index",
-			"style": {
-				"navigationBarTitleText": "个人中心",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/notification",
-			"style": {
-				"navigationBarTitleText": "通知设置",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/about",
-			"style": {
-				"navigationBarTitleText": "关于小程序",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/agreement",
-			"style": {
-				"navigationBarTitleText": "用户协议",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/privacy",
-			"style": {
-				"navigationBarTitleText": "隐私政策",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/fillUserInfo",
-			"style": {
-				"navigationBarTitleText": "完善头像昵称",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/userManage",
-			"style": {
-				"navigationBarTitleText": "用户管理",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/monthlyReport",
-			"style": {
-				"navigationBarTitleText": "月度对账",
-				"navigationStyle": "custom"
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "澜充小站",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	},
-	"tabBar": {
-		"color": "#888",
-		"selectedColor": "#FFA500",
-		"backgroundColor": "#fff",
-		"borderStyle": "black",
-		"list": [
-			{
-				"pagePath": "pages/index/index",
-				"iconPath": "static/tabbar/home.png",
-				"selectedIconPath": "static/tabbar/home-active.png",
-				"text": "首页"
-			},
-			{
-				"pagePath": "pages/profile/index",
-				"iconPath": "static/tabbar/user.png",
-				"selectedIconPath": "static/tabbar/user-active.png",
-				"text": "我的"
-			}
-		]
-	},
-	"uniIdRouter": {},
-	"condition": {
-		"current": 0,
-		"list": []
-	}
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "馨澜美邻",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/reservations/index",
+      "style": {
+        "navigationBarTitleText": "预约充电",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/records/index",
+      "style": {
+        "navigationBarTitleText": "充电记录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/records/create",
+      "style": {
+        "navigationBarTitleText": "上传记录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/records/list",
+      "style": {
+        "navigationBarTitleText": "充电记录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/records/detail",
+      "style": {
+        "navigationBarTitleText": "记录详情",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/records/edit",
+      "style": {
+        "navigationBarTitleText": "编辑记录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/notification",
+      "style": {
+        "navigationBarTitleText": "通知设置",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/about",
+      "style": {
+        "navigationBarTitleText": "关于小程序",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/agreement",
+      "style": {
+        "navigationBarTitleText": "用户协议",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/privacy",
+      "style": {
+        "navigationBarTitleText": "隐私政策",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/fillUserInfo",
+      "style": {
+        "navigationBarTitleText": "完善头像昵称",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/userManage",
+      "style": {
+        "navigationBarTitleText": "用户管理",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/monthlyReport",
+      "style": {
+        "navigationBarTitleText": "月度对账",
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "澜充小站",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#888",
+    "selectedColor": "#FFA500",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "iconPath": "static/tabbar/user.png",
+        "selectedIconPath": "static/tabbar/user-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "uniIdRouter": {},
+  "condition": {
+    "current": 0,
+    "list": []
+  }
 }

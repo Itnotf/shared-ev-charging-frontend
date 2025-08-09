@@ -1,5 +1,32 @@
 {
+  "name": "shared_charge_frontend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "commitlint": "commitlint -E HUSKY_GIT_PARAMS"
+  },
   "dependencies": {
     "@dcloudio/uni-ui": "^1.5.8"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.3.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.8",
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2"
+  },
+  "lint-staged": {
+    "*.{js,vue,scss,css,json,md}": [
+      "prettier --write"
+    ],
+    "*.{js,vue}": [
+      "eslint --fix"
+    ]
   }
 }

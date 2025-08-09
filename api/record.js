@@ -5,7 +5,7 @@ export const getRecords = (date) => {
   return http({
     url: '/api/records',
     method: 'GET',
-    data: date ? { date } : {}
+    data: date ? { date } : {},
   });
 };
 
@@ -14,7 +14,7 @@ export const createRecord = (data) => {
   return http({
     url: '/api/records',
     method: 'POST',
-    data
+    data,
   });
 };
 
@@ -22,7 +22,7 @@ export const createRecord = (data) => {
 export const getUnsubmittedRecord = () => {
   return http({
     url: '/api/records/unsubmitted',
-    method: 'GET'
+    method: 'GET',
   });
 };
 
@@ -31,7 +31,7 @@ export const getRecordsList = (month) => {
   return http({
     url: '/api/records/list',
     method: 'GET',
-    data: { month }
+    data: { month },
   });
 };
 
@@ -39,7 +39,7 @@ export const getRecordsList = (month) => {
 export const getRecordDetail = (id) => {
   return http({
     url: `/api/records/${id}`,
-    method: 'GET'
+    method: 'GET',
   });
 };
 
@@ -48,6 +48,6 @@ export const updateRecord = (id, data) => {
   return http({
     url: `/api/records/${id}`,
     method: 'PUT',
-    data
+    data,
   });
-}; 
+};

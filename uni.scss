@@ -15,23 +15,23 @@
 /* 颜色变量 */
 
 /* 行为相关颜色 */
-$uni-color-primary: #FFA500; // 主色调：橙黄色
-$uni-color-success: #67C23A;
-$uni-color-warning: #E6A23C;
-$uni-color-error: #F56C6C;
+$uni-color-primary: #ffa500; // 主色调：橙黄色
+$uni-color-success: #67c23a;
+$uni-color-warning: #e6a23c;
+$uni-color-error: #f56c6c;
 
 /* 文字基本颜色 */
-$uni-text-color: #333;//基本色
-$uni-text-color-inverse: #fff;//反色
-$uni-text-color-grey: #999;//辅助灰色，如加载更多的提示信息
+$uni-text-color: #333; //基本色
+$uni-text-color-inverse: #fff; //反色
+$uni-text-color-grey: #999; //辅助灰色，如加载更多的提示信息
 $uni-text-color-placeholder: #808080;
 $uni-text-color-disable: #c0c0c0;
 
 /* 背景颜色 */
 $uni-bg-color: #ffffff;
 $uni-bg-color-grey: #f8f8f8;
-$uni-bg-color-hover: #f1f1f1;//点击状态颜色
-$uni-bg-color-mask: rgba(0, 0, 0, 0.4);//遮罩颜色
+$uni-bg-color-hover: #f1f1f1; //点击状态颜色
+$uni-bg-color-mask: rgba(0, 0, 0, 0.4); //遮罩颜色
 
 /* 边框颜色 */
 $uni-border-color: #eee;
@@ -80,15 +80,15 @@ $uni-color-title: #1a1a2e; // 文章标题颜色
 $uni-font-size-title: 40rpx;
 $uni-color-subtitle: #555555; // 二级标题颜色
 $uni-font-size-subtitle: 36rpx;
-$uni-color-paragraph: #3F536E; // 文章段落颜色
+$uni-color-paragraph: #3f536e; // 文章段落颜色
 $uni-font-size-paragraph: 30rpx;
 
 /* 项目特定变量 */
-$charging-color-primary: #FFA500; // 澜充小站主色调
+$charging-color-primary: #ffa500; // 澜充小站主色调
 $charging-color-secondary: #1a1a2e; // 澜充小站次要色
 $charging-color-secondary-light: #16213e; // 澜充小站浅色次要色
 $charging-gradient-navbar: linear-gradient(to right, #1a1a2e, #16213e); // 导航栏渐变
-$charging-gradient-primary: linear-gradient(to right, #FFA500, #F39C12); // 主色调渐变
+$charging-gradient-primary: linear-gradient(to right, #ffa500, #f39c12); // 主色调渐变
 $charging-shadow-sm: 0 2rpx 6rpx rgba(0, 0, 0, 0.05); // 小阴影
 $charging-shadow-md: 0 4rpx 12rpx rgba(0, 0, 0, 0.08); // 中等阴影
 $charging-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12); // 大阴影
@@ -172,7 +172,7 @@ $charging-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12); // 大阴影
 }
 
 // 主色调
-$primary: #FFA500;
+$primary: #ffa500;
 $secondary: #07c160;
 $bg: #f8f8f8;
 $text-main: #333;
@@ -206,7 +206,7 @@ $white: #fff;
 .card {
   background: $white;
   border-radius: 12rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
   margin-bottom: 20rpx;
   padding: 20rpx;
 }
@@ -240,22 +240,22 @@ $white: #fff;
 }
 
 $card-radius: 28rpx;
-$card-shadow: 0 4rpx 24rpx rgba(0,0,0,0.10);
-$card-shadow-deep: 0 8rpx 32rpx rgba(0,0,0,0.16);
+$card-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.1);
+$card-shadow-deep: 0 8rpx 32rpx rgba(0, 0, 0, 0.16);
 $card-margin: 20rpx;
-$main-color: #FFA500;
-$main-color-dark: #D46B08;
-$main-color-light: #FFB84D;
-$main-color-deep: #D46B08;
-$main-color-lighter: #FFF7E6;
-$main-color-lightest: #FFF9F0;
-$main-color-bg1: #FFF7E6;
-$main-color-bg2: #FFFBEA;
-$main-color-bg3: #FFF3E0;
+$main-color: #ffa500;
+$main-color-dark: #d46b08;
+$main-color-light: #ffb84d;
+$main-color-deep: #d46b08;
+$main-color-lighter: #fff7e6;
+$main-color-lightest: #fff9f0;
+$main-color-bg1: #fff7e6;
+$main-color-bg2: #fffbea;
+$main-color-bg3: #fff3e0;
 $function-gap: 36rpx;
 $function-margin: 32rpx 0;
 $icon-size: 64rpx;
-$icon-color-1: #FFA500;
-$icon-color-2: #D46B08;
-$icon-color-3: #FFB84D;
-$icon-color-4: #FF9900;
+$icon-color-1: #ffa500;
+$icon-color-2: #d46b08;
+$icon-color-3: #ffb84d;
+$icon-color-4: #ff9900;

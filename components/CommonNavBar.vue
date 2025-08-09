@@ -1,79 +1,80 @@
 <template>
-  <view>
-    <uni-nav-bar
-      :title="title"
-      color="#333"
-      backgroundColor="#fff"
-      statusBar
-    >
-      <!-- 自定义返回按钮 -->
-      <template v-slot:left>
-        <view v-if="showBack" class="nav-left-btn" @click="onLeftClick">
-          <uni-icons type="back" size="22" color="#333" />
-        </view>
-      </template>
-    </uni-nav-bar>
+  <view class="nav-bar">
+    <view v-if="showBack" class="nav-left" @click="goBack">
+      <uni-icons type="back" size="22" class="nav-icon" />
+    </view>
+    <view v-else class="nav-left"></view>
+    <text class="nav-title">{{ title }}</text>
+    <view class="nav-right">
+      <slot name="right"></slot>
+    </view>
   </view>
 </template>
 
 <script>
-import uniNavBar from '@dcloudio/uni-ui/lib/uni-nav-bar/uni-nav-bar.vue';
-import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
-export default {
-  name: 'CommonNavBar',
-  components: { uniNavBar, uniIcons },
-  props: {
-    title: {
-      type: String,
-      default: ''
+  export default {
+    name: 'CommonNavBar',
+    props: {
+      title: {
+        type: String,
+        default: '',
+      },
+      showBack: {
+        type: Boolean,
+        default: true,
+      },
     },
-    rightClick: {
-      type: Function,
-      default: null
+    methods: {
+      goBack() {
+        uni.navigateBack({
+          delta: 1,
+        });
+      },
     },
-    showBack: {
-      type: Boolean,
-      default: false
-    },
-    backPath: {
-      type: String,
-      default: '/pages/index/index'
-    }
-  },
-  methods: {
-    onRightClick(e) {
-      this.rightClick && this.rightClick(e);
-    },
-    onLeftClick() {
-      const pages = getCurrentPages();
-      if (pages.length > 1) {
-        uni.navigateBack();
-      } else {
-        const tabPages = [
-          '/pages/index/index',
-          '/pages/reservations/index',
-          '/pages/records/create',
-          '/pages/profile/index'
-        ];
-        if (this.backPath && this.backPath.startsWith('/pages/')) {
-          if (tabPages.includes(this.backPath)) {
-            uni.switchTab({ url: this.backPath });
-          } else {
-            uni.redirectTo({ url: this.backPath });
-          }
-        } else {
-          uni.switchTab({ url: '/pages/index/index' });
-        }
-      }
-    }
-  }
-}
+  };
 </script>
 
-<style scoped>
-.nav-left-btn {
-  padding: 0 20rpx;
-  display: flex;
-  align-items: center;
-}
-</style> 
+<style lang="scss">
+  @import '@/uni.scss';
+
+  .nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 88rpx;
+    background-color: $uni-bg-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 $uni-spacing-row-base;
+    z-index: 1000;
+    box-shadow: $charging-shadow-sm;
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      width: 80rpx;
+      height: 100%;
+    }
+
+    .nav-icon {
+      color: $uni-text-color;
+    }
+
+    .nav-title {
+      font-size: $uni-font-size-lg;
+      font-weight: bold;
+      color: $uni-text-color;
+      flex: 1;
+      text-align: center;
+    }
+
+    .nav-right {
+      width: 80rpx;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+</style>

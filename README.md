@@ -61,28 +61,33 @@ A uni-app + Vue3 based mini-program frontend for LanChong Station, supporting We
 ## Core Features
 
 ### 1. Charging Record Management System
+
 - **Layered Management**: Statistics page shows data analysis, record list shows detailed records
 - **Complete Workflow**: Create → List → Detail → Edit → Save
 - **Data Validation**: Validate reservation ID when creating records, ensuring data integrity
 - **Image Processing**: Support image compression, thumbnail generation, local caching
 
 ### 2. Unified Image Caching Mechanism
+
 - **Smart Caching**: Avatars and record images uniformly use `fetchAndCacheImage` mechanism
 - **Performance Optimization**: Prioritize local cache, network requests as fallback
 - **Cross-platform Compatibility**: Support mini-program, H5, App multi-platform image display
 
 ### 3. Navigation Flow Optimization
+
 - **Home Function Simplification**: Reservation charging → Reservation, Upload records → Upload, Charging records → Statistics, Profile center → My
 - **New Record Entry**: Add "Records" card on home page, directly enter record list
 - **Smart Navigation**: Return to home page after upload completion, return to detail page after edit completion
 
 ### 4. User Experience Enhancement
+
 - **Avatar Caching**: Profile center avatar local caching, improve loading speed
 - **Data Refresh**: Auto-refresh data after detail page editing
 - **Amount Calculation**: Auto-calculate fees on edit page
 - **Permission Control**: Can only edit own records
 
 ### 5. Admin-Only Features
+
 - **Permission Entry**: Only admin users see "User Management" and "Monthly Report" entries in profile center, displayed in separate group
 - **User Management**: Support toggling can_reserve status, editing unit_price, all operations take effect immediately
 - **Monthly Report**: Can select month, display all users' total amounts for current month and whether data has been uploaded, one-click copy content as "Name: Amount" or "Name: Not uploaded", suitable for WeChat pasting
@@ -92,6 +97,7 @@ A uni-app + Vue3 based mini-program frontend for LanChong Station, supporting We
 ## Global Styles
 
 - **uni.scss**: Defines primary colors, secondary colors, fonts, spacing, border radius, shadows and other variables and mixins, pages and components can use directly, unified style, easy theme switching.
+- **Style Tokenization**: All hardcoded styles have been converted to use SCSS variables from `uni.scss`, ensuring consistent theming and easy maintenance. Components and pages use `@import '@/uni.scss'` and replace hex colors with predefined tokens.
 
 ---
 
@@ -99,8 +105,11 @@ A uni-app + Vue3 based mini-program frontend for LanChong Station, supporting We
 
 - **api/**: All backend APIs have independent file encapsulation, support automatic token injection, 401 auto-refresh, unified error handling
 - **utils/**: Contains date formatting, amount calculation, global navigation goTo, authentication management userAuth, image caching, compression and other common utility functions
+- **getPayload**: Unified response data extraction utility that ensures consistent data handling across different API response formats
+- **Global Constants**: `PRIMARY_COLOR` and `SUCCESS_COLOR` defined in `config/index.js` for centralized theme color management in templates
 
 ### New API Interfaces
+
 - `getRecordsList(month)`: Get record list for specified month
 - `getRecordDetail(id)`: Get record details
 - `updateRecord(id, data)`: Update record information
@@ -110,6 +119,7 @@ A uni-app + Vue3 based mini-program frontend for LanChong Station, supporting We
 - `getMonthlyReport(month)`: Get monthly reconciliation data (admin only)
 
 ### Image Processing Tools
+
 - `compressImage(path, quality)`: Image compression
 - `generateThumbnail(path)`: Generate thumbnails
 - `fetchAndCacheImage(url, cacheKeyPrefix)`: Unified image caching mechanism
@@ -156,6 +166,22 @@ npm run dev:mp-weixin
 
 ---
 
+## Code Style & Workflow
+
+- Pre-commit runs Prettier and ESLint automatically (Husky + lint-staged)
+- Commit messages follow Conventional Commits (commitlint)
+- Use theme tokens and common classes from `uni.scss`
+
+### Common Scripts
+
+```bash
+npm run lint      # ESLint
+npm run format    # Prettier
+npm run prepare   # Install Husky hooks
+```
+
+---
+
 ## Version and Platform
 
 - Vue 3.x
@@ -178,6 +204,7 @@ npm run dev:mp-weixin
 ## Update Log
 
 ### Latest Version
+
 - ✅ Added charging record management system (list, detail, edit pages)
 - ✅ Implemented unified image caching mechanism, improve loading performance
 - ✅ Optimized home page function naming, simplify user understanding
@@ -187,11 +214,13 @@ npm run dev:mp-weixin
 - ✅ Added admin-only "User Management" and "Monthly Report" pages, separate entry group, see details above
 - ✅ Optimized monthly report one-click copy content format, suitable for WeChat group messaging
 - ✅ Unified avatar rendering logic, all pages use getAvatarUrl processing
+- ✅ **API Unification**: Migrated all admin APIs to unified HTTP request with 401 auto-refresh and retry mechanisms
+- ✅ **Style Tokenization**: Converted all hardcoded styles to SCSS variables, ensuring consistent theming across all components and pages
+- ✅ **Response Standardization**: Implemented `getPayload` utility for consistent data extraction from API responses
+- ✅ **Global Constants**: Added centralized theme color constants (`PRIMARY_COLOR`, `SUCCESS_COLOR`) for template usage
 
 ---
 
 ## Contribution and Feedback
 
 For secondary development, feature extension or any questions, welcome to create issues or contact maintainers.
-
-

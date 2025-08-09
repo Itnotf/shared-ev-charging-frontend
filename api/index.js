@@ -9,22 +9,22 @@ const httpInterceptor = {
   invoke(options) {
     // 1. 拼接请求地址
     options.url = baseUrl + options.url;
-    
+
     // 2. 请求头
     options.header = {
       ...options.header,
       'Content-Type': 'application/json',
     };
-    
+
     // 3. 添加token
     const token = uni.getStorageSync('token');
     if (token) {
       options.header.Authorization = `Bearer ${token}`;
     }
-    
+
     // 4. 超时时间
     options.timeout = 10000;
-  }
+  },
 };
 
 // 注册拦截器
@@ -38,7 +38,7 @@ export const createApi = (module) => {
     if (module) {
       options.url = `/${module}${options.url}`;
     }
-    
+
     return http(options);
   };
 };
@@ -53,10 +53,10 @@ const refreshAuthToken = async () => {
           method: 'POST',
           header: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${uni.getStorageSync('token')}`
-          }
+            Authorization: `Bearer ${uni.getStorageSync('token')}`,
+          },
         });
-        
+
         if (res.statusCode === 200 && res.data.token) {
           // 更新存储的token
           uni.setStorageSync('token', res.data.token);
@@ -76,7 +76,7 @@ const refreshAuthToken = async () => {
       }
     });
   }
-  
+
   return refreshTokenPromise;
 };
 
@@ -94,16 +94,16 @@ export const http = (options) => {
           try {
             // 尝试刷新Token
             const newToken = await refreshAuthToken();
-            
+
             // 使用新token重新发起请求
             const newOptions = {
               ...options,
               header: {
                 ...options.header,
-                Authorization: `Bearer ${newToken}`
-              }
+                Authorization: `Bearer ${newToken}`,
+              },
             };
-            
+
             // 重新发起请求
             const retryRes = await http(newOptions);
             resolve(retryRes);
@@ -154,7 +154,7 @@ export const uploadFile = (filePath) => {
       },
     });
   });
-}; 
+};
 
 // 同步用户信息
 export const syncUserProfile = (userInfo) => {
@@ -163,7 +163,7 @@ export const syncUserProfile = (userInfo) => {
     method: 'POST',
     data: {
       avatarUrl: userInfo.avatarUrl,
-      nickName: userInfo.nickName
-    }
+      nickName: userInfo.nickName,
+    },
   });
-}; 
+};

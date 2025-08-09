@@ -5,16 +5,17 @@
 </template>
 
 <script>
-export default {
-  name: 'BaseGroup'
-};
+  export default {
+    name: 'BaseGroup',
+  };
 </script>
 
-<style scoped>
-.base-group {
-  background: #fff;
-  border-radius: 0;
-  margin: 24rpx 0;
-  /* 不加阴影 */
-}
-</style> 
+<style lang="scss" scoped>
+  @import '@/uni.scss';
+  .base-group {
+    background: $white;
+    border-radius: 0;
+    margin: $uni-spacing-row-sm 0;
+    /* 不加阴影 */
+  }
+</style>

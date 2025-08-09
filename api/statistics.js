@@ -5,7 +5,7 @@ export const getMonthlyStatistics = (month) => {
   return http({
     url: '/api/statistics/monthly',
     method: 'GET',
-    data: { month }
+    data: { month },
   });
 };
 
@@ -14,7 +14,7 @@ export const getDailyStatistics = (month) => {
   return http({
     url: '/api/statistics/daily',
     method: 'GET',
-    data: { month }
+    data: { month },
   });
 };
 
@@ -23,6 +23,6 @@ export const getMonthlyShiftStatistics = (month) => {
   return http({
     url: '/api/statistics/monthly-shift',
     method: 'GET',
-    data: { month }
+    data: { month },
   });
-}; 
+};
