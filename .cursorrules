@@ -325,6 +325,31 @@ export const calculateAmount = (kwh, unitPrice) => {
 - 页面方法应避免直接操作 DOM
 - 异步操作必须有错误处理测试路径
 
+## 提交信息规范
+
+### Commit Message 自动生成
+- **每次修改完成后**：必须生成符合 Conventional Commits 的英文提交信息
+- **格式要求**：使用 `type(scope): description` 格式
+- **常用类型**：
+  - `feat`: 新功能
+  - `fix`: 修复bug
+  - `refactor`: 重构代码
+  - `style`: 样式调整
+  - `docs`: 文档更新
+  - `perf`: 性能优化
+  - `test`: 测试相关
+  - `chore`: 构建/工具链相关
+- **示例格式**：
+  ```
+  feat(user): add avatar upload functionality
+  
+  - Implement image compression and upload
+  - Add avatar preview in profile page
+  - Update user info API integration
+  
+  Closes #123
+  ```
+
 ## 文档更新规范
 
 ### 每次代码更新后必须检查的文档
