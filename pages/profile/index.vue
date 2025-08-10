@@ -26,6 +26,12 @@
       <!-- 分组2 -->
       <BaseGroup>
         <BaseGroupItem
+          icon="car"
+          title="车牌管理"
+          @click="goTo('/pages/profile/licensePlates')"
+          rightIcon="right"
+        />
+        <BaseGroupItem
           icon="lock"
           title="隐私政策"
           @click="goTo('/pages/profile/privacy')"

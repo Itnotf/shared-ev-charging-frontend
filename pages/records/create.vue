@@ -42,6 +42,14 @@
         </view>
       </view>
 
+      <!-- 车牌号选择 -->
+      <view class="card">
+        <view class="card-header">
+          <text class="card-title">选择车牌号</text>
+        </view>
+        <LicensePlateSelector v-model="selectedLicensePlate" @change="onLicensePlateChange" />
+      </view>
+
       <!-- 电量输入 -->
       <view class="card">
         <view class="card-header">
@@ -76,7 +84,7 @@
       <button
         class="submit-btn"
         @click="submitRecord"
-        :disabled="!reservationId || !kwh || parseFloat(kwh) <= 0"
+        :disabled="!reservationId || !kwh || parseFloat(kwh) <= 0 || !selectedLicensePlate"
       >
         <uni-icons type="wallet" size="20" class="wallet-icon"></uni-icons>
         <text class="btn-text">提交记录 ¥{{ cost }}</text>
@@ -125,9 +133,12 @@
 
   import { getCurrentReservationStatus } from '@/api/reservation';
   import { getUserPrice } from '@/api/auth';
+  import LicensePlateSelector from '@/components/LicensePlateSelector.vue';
 
   export default {
-
+    components: {
+      LicensePlateSelector,
+    },
     data() {
       return {
         TIMESLOTS,
@@ -138,6 +149,7 @@
         kwh: '',
         cost: '0.00',
         remark: '',
+        selectedLicensePlate: null,
         recentRecords: [],
         reservationId: '',
         reservationDate: '',
@@ -174,6 +186,9 @@
       this.loadRecentRecords(); // 每次进入页面都刷新最近记录
     },
     methods: {
+      onLicensePlateChange(licensePlate) {
+        this.selectedLicensePlate = licensePlate;
+      },
       async chooseImage() {
         this.skipCheck = true; // 选择图片时不弹框
         uni.chooseImage({
@@ -248,6 +263,11 @@
           uni.showToast({ title: '请输入有效的充电度数', icon: 'none' });
           return;
         }
+
+        if (!this.selectedLicensePlate) {
+          uni.showToast({ title: '请选择车牌号', icon: 'none' });
+          return;
+        }
         uni.showLoading({ title: '提交中' });
         try {
           let imageUrl = '';
@@ -266,6 +286,7 @@
             image_url: imageUrl,
             remark: this.remark,
             reservation_id: this.reservationId, // 始终传递
+            license_plate_id: this.selectedLicensePlate.id,
           };
           // 提交 recordData 调试
           await createRecord(recordData);
@@ -277,6 +298,7 @@
           this.kwh = '';
           this.cost = '0.00';
           this.remark = '';
+          this.selectedLicensePlate = null;
           this.reservationId = '';
           this.reservationDate = '';
           this.reservationTimeslot = '';

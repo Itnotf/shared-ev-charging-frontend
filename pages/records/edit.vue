@@ -49,6 +49,14 @@
         </view>
       </view>
 
+      <!-- 车牌号选择 -->
+      <view class="card">
+        <view class="card-header">
+          <text class="card-title">选择车牌号</text>
+        </view>
+        <LicensePlateSelector v-model="selectedLicensePlate" @change="onLicensePlateChange" />
+      </view>
+
       <!-- 电量输入 -->
       <view class="card">
         <view class="card-header">
@@ -80,7 +88,7 @@
       </view>
 
       <!-- 提交按钮 -->
-      <button class="submit-btn" @click="updateRecord" :disabled="!kwh || parseFloat(kwh) <= 0">
+      <button class="submit-btn" @click="updateRecord" :disabled="!kwh || parseFloat(kwh) <= 0 || !selectedLicensePlate">
         <uni-icons type="checkmarkempty" size="20" class="submit-icon"></uni-icons>
         <text class="btn-text">保存修改</text>
       </button>
@@ -95,9 +103,12 @@
   import { uploadFile } from '@/api/index';
 
   import { getUserPrice } from '@/api/auth';
+  import LicensePlateSelector from '@/components/LicensePlateSelector.vue';
 
   export default {
-
+    components: {
+      LicensePlateSelector,
+    },
     data() {
       return {
         TIMESLOTS,
@@ -117,6 +128,7 @@
         kwh: '',
         cost: '0.00',
         remark: '',
+        selectedLicensePlate: null,
         loading: false,
       };
     },
@@ -127,6 +139,9 @@
       }
     },
     methods: {
+      onLicensePlateChange(licensePlate) {
+        this.selectedLicensePlate = licensePlate;
+      },
       async loadRecordDetail() {
         this.loading = true;
         try {
@@ -139,6 +154,7 @@
             this.kwh = String(this.record.kwh);
             this.remark = this.record.remark || '';
             this.imageUrl = getRecordImageUrl(this.record.image_url || '');
+            this.selectedLicensePlate = this.record.license_plate || null;
             this.calculateCost();
           }
         } catch (error) {
@@ -193,6 +209,11 @@
           return;
         }
 
+        if (!this.selectedLicensePlate) {
+          uni.showToast({ title: '请选择车牌号', icon: 'none' });
+          return;
+        }
+
         uni.showLoading({ title: '保存中' });
         try {
           let imageUrl = this.record.image_url; // 默认使用原图片
@@ -211,6 +232,7 @@
             kwh: parseFloat(this.kwh),
             image_url: imageUrl,
             remark: this.remark,
+            license_plate_id: this.selectedLicensePlate.id,
           };
 
           // 提交更新数据调试

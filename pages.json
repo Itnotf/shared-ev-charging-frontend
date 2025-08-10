@@ -95,6 +95,12 @@
       "style": {
         "navigationBarTitleText": "月度对账"
       }
+    },
+    {
+      "path": "pages/profile/licensePlates",
+      "style": {
+        "navigationBarTitleText": "车牌管理"
+      }
     }
   ],
   "globalStyle": {

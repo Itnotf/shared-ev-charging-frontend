@@ -17,8 +17,16 @@ Vue.component('uni-nav-bar', uniNavBar);
 
 // #ifdef VUE3
 import { createSSRApp } from 'vue';
+import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
+import uniNavBar from '@dcloudio/uni-ui/lib/uni-nav-bar/uni-nav-bar.vue';
+
 export function createApp() {
   const app = createSSRApp(App);
+  
+  // 注册全局组件
+  app.component('uni-icons', uniIcons);
+  app.component('uni-nav-bar', uniNavBar);
+  
   return {
     app,
   };

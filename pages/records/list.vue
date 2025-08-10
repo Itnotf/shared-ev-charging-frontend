@@ -50,6 +50,9 @@
                 <text class="record-kwh">{{ record.kwh }} kWh</text>
                 <text class="record-amount">¥{{ formatAmount(record.amount) }}</text>
               </view>
+              <view v-if="record.license_plate" class="record-license-plate">
+                <text class="license-plate-text">{{ record.license_plate.plate_number }}</text>
+              </view>
               <text v-if="record.remark" class="record-remark">{{ record.remark }}</text>
             </view>
             <view class="record-right">
@@ -340,6 +343,19 @@
     border-radius: $uni-border-radius-base;
     padding: 4rpx 12rpx;
     font-size: 22rpx;
+  }
+
+  .record-license-plate {
+    margin-top: 8rpx;
+
+    .license-plate-text {
+      font-size: 24rpx;
+      color: $uni-text-color-grey;
+      background-color: rgba($uni-color-primary, 0.1);
+      padding: 4rpx 12rpx;
+      border-radius: 8rpx;
+      letter-spacing: 1rpx;
+    }
   }
 
   .record-info {

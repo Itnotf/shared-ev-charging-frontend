@@ -47,6 +47,11 @@
             <text class="info-value highlight">¥{{ formatAmount(record.amount) }}</text>
           </view>
 
+          <view v-if="record.license_plate" class="info-item">
+            <text class="info-label">车牌号</text>
+            <text class="info-value license-plate">{{ record.license_plate.plate_number }}</text>
+          </view>
+
           <view v-if="record.remark" class="info-item">
             <text class="info-label">备注</text>
             <text class="info-value">{{ record.remark }}</text>
@@ -286,6 +291,15 @@
   .info-value.highlight {
     color: $primary;
     font-weight: bold;
+  }
+
+  .info-value.license-plate {
+    background-color: rgba($uni-color-primary, 0.1);
+    color: $uni-color-primary;
+    padding: 8rpx 16rpx;
+    border-radius: 8rpx;
+    font-weight: 600;
+    letter-spacing: 2rpx;
   }
 
   .action-buttons {

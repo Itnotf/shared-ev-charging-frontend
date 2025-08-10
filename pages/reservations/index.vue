@@ -105,6 +105,9 @@
                       reservations[selectedDate + '_day'].userName ||
                       'XXX'
                     }}已预约
+                    <text v-if="reservations[selectedDate + '_day'].license_plate" class="license-plate-tag">
+                      {{ reservations[selectedDate + '_day'].license_plate.plate_number }}
+                    </text>
                   </view>
                 </view>
                 <uni-icons
@@ -147,6 +150,9 @@
                       reservations[selectedDate + '_night'].userName ||
                       'XXX'
                     }}已预约
+                    <text v-if="reservations[selectedDate + '_night'].license_plate" class="license-plate-tag">
+                      {{ reservations[selectedDate + '_night'].license_plate.plate_number }}
+                    </text>
                   </view>
                 </view>
                 <uni-icons
@@ -164,9 +170,17 @@
           </view>
         </view>
       </CommonCard>
+      <!-- 车牌号选择 -->
+      <CommonCard v-if="selectedDate && selectedTimeSlot && !currentReservation" customClass="card">
+        <view class="card-header">
+          <text class="card-title">选择车牌号</text>
+        </view>
+        <LicensePlateSelector v-model="selectedLicensePlate" @change="onLicensePlateChange" />
+      </CommonCard>
+
       <!-- 确认按钮 -->
       <button
-        v-if="selectedDate && selectedTimeSlot && !currentReservation"
+        v-if="selectedDate && selectedTimeSlot && selectedLicensePlate && !currentReservation"
         class="confirm-btn"
         @click="confirmReservation"
       >
@@ -202,11 +216,13 @@
   import uniIcons from '@dcloudio/uni-ui/lib/uni-icons/uni-icons.vue';
 
   import CommonCard from '@/components/CommonCard.vue';
+  import LicensePlateSelector from '@/components/LicensePlateSelector.vue';
 
   export default {
     components: {
       uniIcons,
       CommonCard,
+      LicensePlateSelector,
     },
     data() {
       return {
@@ -217,6 +233,7 @@
         currentMonth: 0,
         selectedDate: '',
         selectedTimeSlot: '',
+        selectedLicensePlate: null,
         reservations: {},
         daysInMonth: [],
         forbidReservation: false,
@@ -244,6 +261,9 @@
       if (this.pollingTimer) clearInterval(this.pollingTimer);
     },
     methods: {
+      onLicensePlateChange(licensePlate) {
+        this.selectedLicensePlate = licensePlate;
+      },
       async initReservationState() {
         // 获取当前预约状态
         const res = await getCurrentReservationStatus();
@@ -486,6 +506,10 @@
           uni.showToast({ title: '请选择日期和时段', icon: 'none' });
           return;
         }
+        if (!this.selectedLicensePlate) {
+          uni.showToast({ title: '请选择车牌号', icon: 'none' });
+          return;
+        }
         // 校验冲突
         const reserved = this.getReservedSlots(this.selectedDate);
         if (reserved.includes(this.selectedTimeSlot)) {
@@ -494,7 +518,11 @@
         }
         uni.showLoading({ title: '预约中' });
         try {
-          await createReservation({ date: this.selectedDate, timeslot: this.selectedTimeSlot });
+          await createReservation({ 
+            date: this.selectedDate, 
+            timeslot: this.selectedTimeSlot,
+            license_plate_id: this.selectedLicensePlate.id
+          });
           // 只跳转首页，不再弹窗，首页会自动检测未上传充电记录
           uni.showToast({ title: '预约成功', icon: 'success' });
           setTimeout(() => {
@@ -1003,6 +1031,13 @@
     padding: 4rpx 16rpx;
     font-size: 22rpx;
     font-weight: 500;
+
+    .license-plate-tag {
+      display: block;
+      font-size: 20rpx;
+      color: $uni-text-color-grey;
+      margin-top: 4rpx;
+    }
   }
 
   // 添加图标样式类
