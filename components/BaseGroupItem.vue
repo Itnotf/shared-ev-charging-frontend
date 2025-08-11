@@ -61,10 +61,7 @@
       border-bottom: none;
     }
 
-    .base-group-item-icon {
-      color: $uni-color-primary;
-      margin-right: $uni-spacing-row-sm;
-    }
+      .base-group-item-icon { display: none; }
 
     .base-group-item-content {
       flex: 1;
@@ -74,7 +71,6 @@
       .base-group-item-title {
         font-size: $uni-font-size-base;
         color: $uni-text-color;
-        margin-bottom: 4rpx;
       }
 
       .base-group-item-subtitle {

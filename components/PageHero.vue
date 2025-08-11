@@ -4,7 +4,10 @@
     <view class="hero-content">
       <view class="hero-title">
         <text class="title-text">{{ title }}</text>
-        <text v-if="subtitle" class="title-subtitle">{{ subtitle }}</text>
+        <template v-if="hasSubtitleSlot">
+          <slot name="subtitle" />
+        </template>
+        <text v-else-if="subtitle" class="title-subtitle">{{ subtitle }}</text>
       </view>
       <view class="hero-actions">
         <slot name="actions">
@@ -49,6 +52,9 @@ export default {
   computed: {
     hasActions() {
       return !!this.$slots.actions;
+    },
+    hasSubtitleSlot() {
+      return !!this.$slots.subtitle;
     },
   },
 };

@@ -99,7 +99,8 @@
     {
       "path": "pages/profile/licensePlates",
       "style": {
-        "navigationBarTitleText": "车牌管理"
+        "navigationBarTitleText": "车牌管理",
+        "enablePullDownRefresh": true
       }
     }
   ],

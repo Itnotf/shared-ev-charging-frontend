@@ -1,20 +1,13 @@
 <template>
   <view class="license-plates-page">
-    <!-- 顶部装饰背景 -->
-    <view class="page-header">
-      <view class="header-bg"></view>
-      <view class="header-content">
-        <view class="header-title">
-          <text class="title-text">车牌管理</text>
-          <text class="title-subtitle">新能源 · 绿色出行</text>
-        </view>
-        <view class="header-icon">
-          <uni-icons type="location" size="48" color="#fff" />
-        </view>
-      </view>
-    </view>
+    <PageHero
+      title="车牌管理"
+      subtitle="新能源 · 绿色出行"
+      :height="260"
+      bgClass="gradient-purple"
+    />
 
-    <view class="content">
+    <PageContent :overlapOffset="24">
       <!-- 添加车牌号区域 -->
       <view class="add-section">
         <view class="add-card">
@@ -32,9 +25,13 @@
             <view class="input-container">
               <input
                 v-model="newPlateNumber"
+                ref="plateInput"
+                :focus="inputFocused"
                 class="plate-input"
                 placeholder="请输入车牌号，如：京AD12345"
                 maxlength="8"
+                confirm-type="done"
+                @confirm="addPlate"
                 @input="onPlateInput"
               />
               <view class="input-icon">
@@ -51,6 +48,10 @@
               <uni-icons v-if="!adding" type="plusempty" size="20" color="#fff" />
               <text>{{ adding ? '添加中...' : '添加车牌' }}</text>
             </button>
+            <view class="input-hints">
+              <text class="hint">示例：沪AD12345 / 沪A·D12345</text>
+              <text class="hint secondary">支持传统车牌与新能源车牌（自动大写）</text>
+            </view>
           </view>
           
           <view v-if="plateError" class="error-message">
@@ -71,6 +72,10 @@
             <uni-icons type="bars" size="24" color="#FFA500" />
           </view>
         </view>
+
+        <view v-if="loading" class="plates-loading">
+          <text class="loading-text">加载中...</text>
+        </view>
         
         <view v-if="Array.isArray(licensePlates) && licensePlates.length > 0" class="plates-grid">
           <view
@@ -80,41 +85,16 @@
             :class="{ 'is-default': plate.is_default }"
             :style="{ animationDelay: index * 0.1 + 's' }"
           >
-            <view class="plate-card">
-              <view class="plate-header">
-                <view class="plate-type">
-                  <uni-icons type="location" size="20" color="#4CAF50" />
-                  <text class="type-text">新能源</text>
-                </view>
-                <view v-if="plate.is_default" class="default-indicator">
-                  <uni-icons type="checkmark" size="16" color="#FFA500" />
-                  <text>默认</text>
-                </view>
-              </view>
-              
-              <view class="plate-number-display">
-                <text class="plate-number">{{ plate.plate_number }}</text>
-              </view>
-              
-              <view class="plate-actions">
-                <button 
-                  v-if="!plate.is_default" 
-                  class="action-btn primary"
-                  @click="setDefaultPlate(plate.id)"
-                >
-                  <uni-icons type="checkmark" size="16" color="#fff" />
-                  <text>设为默认</text>
-                </button>
-                <button class="action-btn secondary" @click="editPlate(plate.id)">
-                  <uni-icons type="gear" size="16" color="#666" />
-                  <text>编辑</text>
-                </button>
-                <button class="action-btn danger" @click="deletePlate(plate.id)">
-                  <uni-icons type="close" size="16" color="#fff" />
-                  <text>删除</text>
-                </button>
-              </view>
-            </view>
+            <LicensePlateCard
+              :plate-number="plate.plate_number"
+              :is-default="!!plate.is_default"
+              :plate-id="plate.id"
+              :highlight="highlightId === plate.id"
+              :show-actions="true"
+              @set-default="setDefaultPlate"
+              @edit="editPlate"
+              @delete="deletePlate"
+            />
           </view>
         </view>
 
@@ -126,10 +106,14 @@
             <text class="empty-title">暂无车牌号</text>
             <text class="empty-desc">添加您的第一个新能源车牌号</text>
             <text class="empty-tip">支持传统车牌和新能源车牌格式</text>
+            <button class="add-btn" @click="focusAddInput">
+              <uni-icons type="plusempty" size="20" color="#fff" />
+              <text>去添加</text>
+            </button>
           </view>
         </view>
       </view>
-    </view>
+    </PageContent>
 
     <!-- 编辑车牌号弹窗 -->
     <view v-if="showEditPopup" class="edit-overlay" @click="cancelEdit">
@@ -182,13 +166,15 @@ import {
   validateLicensePlate,
 } from '@/api/licensePlate';
 import { getPayload } from '@/utils';
-import CommonCard from '@/components/CommonCard.vue';
 import LicensePlateCard from '@/components/LicensePlateCard.vue';
+import PageHero from '@/components/PageHero.vue';
+import PageContent from '@/components/PageContent.vue';
 
 export default {
   name: 'LicensePlates',
   components: {
-    CommonCard,
+    PageHero,
+    PageContent,
     LicensePlateCard,
   },
   data() {
@@ -198,6 +184,8 @@ export default {
       plateError: '',
       adding: false,
       loading: false,
+      inputFocused: false,
+      highlightId: null,
       
       // 编辑相关
       editingPlateId: null,
@@ -228,8 +216,27 @@ export default {
       this.closeEditPopup();
     });
   },
+  async onPullDownRefresh() {
+    try {
+      await this.loadLicensePlates();
+    } finally {
+      uni.stopPullDownRefresh();
+    }
+  },
   methods: {
     validateLicensePlate,
+
+    focusAddInput() {
+      try {
+        if (typeof uni.pageScrollTo === 'function') {
+          uni.pageScrollTo({ scrollTop: 0, duration: 200 });
+        }
+      } catch (_) {}
+      this.inputFocused = false;
+      setTimeout(() => {
+        this.inputFocused = true;
+      }, 220);
+    },
     
     closeEditPopup() {
       // 重置编辑状态
@@ -283,9 +290,13 @@ export default {
     },
 
     async addPlate() {
-      if (!this.isValidPlate) return;
+      if (!this.isValidPlate) {
+        uni.showToast({ title: '车牌号格式不正确或已存在', icon: 'none' });
+        return;
+      }
 
       try {
+        if (uni.vibrateShort) uni.vibrateShort({ type: 'light' });
         this.adding = true;
         const isFirstPlate = Array.isArray(this.licensePlates) && this.licensePlates.length === 0;
         await addLicensePlate(this.newPlateNumber, isFirstPlate);
@@ -295,9 +306,14 @@ export default {
           icon: 'success',
         });
         
+        const createdNumber = this.newPlateNumber; // 先缓存
         this.newPlateNumber = '';
         this.plateError = '';
         await this.loadLicensePlates();
+        // 新增后高亮首个或新添加的牌照
+        const justCreated = this.licensePlates.find(p => p && p.plate_number === createdNumber);
+        this.highlightId = justCreated ? justCreated.id : (this.licensePlates[0] && this.licensePlates[0].id);
+        setTimeout(() => { this.highlightId = null; }, 1500);
       } catch (error) {
         console.error('添加车牌号失败:', error);
         uni.showToast({
@@ -659,6 +675,14 @@ export default {
       display: grid;
       grid-template-columns: 1fr;
       gap: 24rpx;
+
+      .plates-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40rpx 0;
+        .loading-text { color: $uni-text-color-grey; font-size: 26rpx; }
+      }
 
       .plate-item {
         animation: slideInUp 0.6s ease forwards;

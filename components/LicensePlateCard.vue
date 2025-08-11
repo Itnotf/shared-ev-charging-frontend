@@ -1,5 +1,5 @@
 <template>
-  <view class="license-plate-card">
+  <view class="license-plate-card" :class="[{ 'is-default': isDefault }, { 'is-highlight': highlight }]">
     <view class="plate-display">
       <view class="plate-number">{{ plateNumber }}</view>
       <view v-if="isDefault" class="default-badge">默认</view>
@@ -38,6 +38,11 @@ export default {
       type: [String, Number],
       default: null,
     },
+    // 是否高亮（例如新添加后短暂高亮）
+    highlight: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     handleSetDefault() {
@@ -61,6 +66,16 @@ export default {
   border-radius: $uni-border-radius-base;
   padding: 24rpx;
   border: 2rpx solid $uni-border-color;
+  position: relative; // 让默认标识可绝对定位而不影响布局
+
+  &.is-default {
+    border-color: rgba($uni-color-success, 0.4);
+    box-shadow: 0 8rpx 24rpx rgba(52, 179, 83, 0.18);
+  }
+
+  &.is-highlight {
+    animation: plateHighlight 1.2s ease-out 1;
+  }
 
   .plate-display {
     display: flex;
@@ -68,29 +83,38 @@ export default {
     justify-content: center;
     gap: 16rpx;
     margin-bottom: 24rpx;
+    position: relative; // 供默认标识定位
 
     .plate-number {
       font-size: 36rpx;
       font-weight: 700;
-      color: $uni-text-color;
       letter-spacing: 4rpx;
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      color: white;
+      // 新能源车牌风格（贴近实物）：浅黄绿 -> 中绿，黑色文字
+      background: linear-gradient(135deg, $plate-ev-gradient-start 0%, $plate-ev-gradient-end 100%);
+      color: #111;
       padding: 16rpx 32rpx;
       border-radius: 12rpx;
       text-align: center;
       min-width: 280rpx;
-      box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);
+      border: 2rpx solid rgba(0, 0, 0, 0.06);
+      text-shadow: 0 1rpx 2rpx rgba(255, 255, 255, 0.25);
     }
 
     .default-badge {
-      font-size: 24rpx;
+      position: absolute;
+      top: 8rpx;
+      right: 8rpx;
+      font-size: 22rpx;
       color: $uni-color-primary;
       background-color: rgba($uni-color-primary, 0.1);
-      padding: 8rpx 16rpx;
-      border-radius: 16rpx;
-      border: 2rpx solid $uni-color-primary;
+      padding: 6rpx 12rpx;
+      border-radius: 999rpx;
+      border: 2rpx solid rgba($uni-color-primary, 0.6);
+      line-height: 1;
+      box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.06);
+      pointer-events: none; // 避免遮挡点击
     }
   }
 
@@ -126,5 +150,11 @@ export default {
       }
     }
   }
+}
+
+@keyframes plateHighlight {
+  0% { box-shadow: 0 0 0 rgba(52, 179, 83, 0); }
+  30% { box-shadow: 0 0 0 12rpx rgba(52, 179, 83, 0.25); }
+  100% { box-shadow: 0 0 0 rgba(52, 179, 83, 0); }
 }
 </style>
