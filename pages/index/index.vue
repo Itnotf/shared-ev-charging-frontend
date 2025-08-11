@@ -1,34 +1,57 @@
 <template>
   <view class="container">
-    <view class="content">
+    <!-- 顶部英雄区：品牌与快捷操作 -->
+    <PageHero 
+      title="澜充小站" 
+      subtitle="共享预约 · 绿色充电" 
+      :height="260"
+      bgClass="gradient-purple"
+    >
+      <template #actions>
+        <button class="primary-action" @click="goToReservationPage">快速预约</button>
+      </template>
+    </PageHero>
+
+    <PageContent :overlapOffset="24">
       <!-- 内容区域原有内容全部移入此处 -->
-      <CommonCard customClass="card overview-card gradient-bg">
+      <HeroCard type="overview" cardClass="overview-card high">
         <view class="card-header card-header-flex overview-header">
           <picker mode="date" fields="month" :value="selectedMonth" @change="onMonthChange">
             <view class="month-picker">{{ selectedMonth }}</view>
           </picker>
           <text class="card-title">用电总览</text>
-          <text class="card-more-btn" @click="goToRecordsPageWithMonth">查看详情</text>
-        </view>
-        <!-- 用电总览卡片数据区块 -->
-        <view class="overview-data with-divider">
-          <view class="data-item">
-            <text class="data-value big main-color">{{ monthlyData.totalKwh || '0.00' }}</text>
-            <text class="data-label gray-label">累计度数 (kWh)</text>
-          </view>
-          <view class="data-item">
-            <text class="data-value big blue-color">¥{{ monthlyData.totalCost || '0.00' }}</text>
-            <text class="data-label gray-label">累计费用</text>
+          <view class="card-link" @click="goToRecordsPageWithMonth">
+            <text>查看详情</text>
+            <text class="link-arrow">></text>
           </view>
         </view>
-      </CommonCard>
+        <!-- 用电总览卡片数据区块（简洁版） -->
+        <view class="overview-data">
+          <view class="data-item">
+            <view class="data-row">
+              <text class="data-value big main-color">{{ formattedKwh }}</text>
+              <text class="data-unit">kWh</text>
+            </view>
+            <text class="data-label">累计度数</text>
+          </view>
+          <view class="data-item">
+            <view class="data-row">
+              <text class="data-value big blue-color">¥{{ formattedCost }}</text>
+              <text class="data-unit">元</text>
+            </view>
+            <text class="data-label">累计费用</text>
+          </view>
+        </view>
+      </HeroCard>
       <!-- 当前预约卡片 -->
-      <CommonCard
+      <HeroCard
         v-if="currentReservation"
-        customClass="card reservation-card highlight-border reservation-card-striped"
+        type="reservation"
+        cardClass="reservation-card high"
       >
-        <view class="card-header" @click="goToReservationPage">
+        <view class="card-header reservation-header" @click="goToReservationPage">
           <text class="card-title">当前预约</text>
+          <text class="status-badge" :class="reservationStatusClass">{{ reservationStatusText }}</text>
         </view>
         <view class="reservation-info">
           <view class="reservation-info-main" @click="goToReservationPage">
@@ -54,62 +77,75 @@
             取消预约
           </button>
         </view>
-      </CommonCard>
-      <CommonCard v-else customClass="card reservation-card empty-reservation-card">
+        <view class="reservation-progress" v-if="currentReservation">
+          <view class="progress-header">
+            <text class="progress-time">{{ reservationTimeRange }}</text>
+            <text class="progress-percent">{{ reservationProgressPercent }}%</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-bar-fill" :style="{ width: reservationProgressPercent + '%' }"></view>
+          </view>
+        </view>
+      </HeroCard>
+      <HeroCard v-else type="reservation" cardClass="empty-reservation-card high">
         <view class="empty-reservation">
           <text class="empty-text">暂无预约</text>
-          <button class="go-reservation-btn" @click="goToReservationPage">去预约</button>
+          <text class="empty-desc">点击顶部快速预约按钮开始预约</text>
         </view>
-      </CommonCard>
-      <!-- 宫格区块v-for渲染，背景色和icon色可变量控制，icon加粗 -->
-      <view class="function-grid-new">
-        <view
-          v-for="item in functionList"
-          :key="item.title"
-          class="function-item-new"
-          :class="item.bgClass"
-          @click="item.onClick"
-        >
-          <view class="function-icon-bg-new" :class="item.bgClass">
-            <SvgIcon
-              :name="item.icon"
-              size="56"
-              :color="item.iconColor"
-              style="font-weight: bold"
-            />
+      </HeroCard>
+            <!-- 功能宫格区域 -->
+      <view class="function-section function-section-spaced">
+        <view class="function-grid-new">
+          <view
+            v-for="item in functionList"
+            :key="item.title"
+            class="function-item-new"
+            :class="item.bgClass"
+            @click="item.onClick"
+          >
+            <view class="function-icon-bg-new" :class="item.bgClass">
+              <SvgIcon :name="item.icon" size="56" :color="item.iconColor" style="font-weight: bold" />
+            </view>
+            <text class="function-title-new">{{ item.title }}</text>
           </view>
-          <text class="function-title-new">{{ item.title }}</text>
         </view>
       </view>
-    </view>
+    </PageContent>
   </view>
 </template>
 
 <script>
   import {
     checkAndHandleNeedUploadRecord,
-    getWeekday,
+    getWeekday as utilGetWeekday,
     goTo,
     getCurrentDate,
     getAvatarUrl,
     getPayload,
   } from '@/utils';
-  import { TIMESLOTS, PRIMARY_COLOR } from '@/config';
+  import { TIMESLOTS, PRIMARY_COLOR, INFO_COLOR } from '@/config';
   import { getCurrentReservationStatus, cancelReservation } from '@/api/reservation';
   import { getMonthlyStatistics } from '@/api/statistics';
   import SvgIcon from '@/components/SvgIcon.vue';
 
-  import CommonCard from '@/components/CommonCard.vue';
+  import PageHero from '@/components/PageHero.vue';
+  import PageContent from '@/components/PageContent.vue';
+  import HeroCard from '@/components/HeroCard.vue';
   import { checkAndFetchUserProfile } from '@/utils';
 
   export default {
     components: {
       SvgIcon,
-      CommonCard,
+      PageHero,
+      PageContent,
+      HeroCard,
     },
     data() {
       return {
         TIMESLOTS,
+        // 颜色常量，供模板使用
+        primaryColor: PRIMARY_COLOR,
+        infoColor: INFO_COLOR,
         monthlyData: {
           totalKwh: 0,
           totalCost: 0,
@@ -150,6 +186,32 @@
         ],
       };
     },
+    computed: {
+      // 供模板直接使用的派生字段（避免在模板中做计算）
+      formattedKwh() {
+        const n = Number(this.monthlyData.totalKwh || 0);
+        return n.toFixed(1);
+      },
+      formattedCost() {
+        const n = Number(this.monthlyData.totalCost || 0);
+        // 千分位与两位小数
+        return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      },
+      reservationStatusText() {
+        const map = { upcoming: '即将开始', ongoing: '进行中', ended: '已结束', none: '' };
+        return map[this.reservationStatus()] || '';
+      },
+      reservationStatusClass() {
+        const cls = { upcoming: 'status-upcoming', ongoing: 'status-ongoing', ended: 'status-ended' };
+        return cls[this.reservationStatus()] || '';
+      },
+      reservationProgressPercent() {
+        return this.reservationProgress();
+      },
+      reservationTimeRange() {
+        return this.reservationRangeText();
+      },
+    },
     async onShow() {
       const token = uni.getStorageSync('token');
       if (token) {
@@ -175,6 +237,65 @@
       this.clearPollingTimer();
     },
     methods: {
+      
+      
+      // 预约状态文本
+      reservationStatus(now = new Date()) {
+        if (!this.currentReservation) return 'none';
+        const dateStr = this.currentReservation.date; // YYYY-MM-DD
+        const timeslot = this.currentReservation.timeslot; // 'day' | 'night'
+        if (!dateStr || !timeslot || !this.TIMESLOTS[timeslot]) return 'upcoming';
+        const startEnd = this._getSlotStartEnd(dateStr, timeslot);
+        if (!startEnd) return 'upcoming';
+        const { start, end } = startEnd;
+        if (now < start) return 'upcoming';
+        if (now >= start && now <= end) return 'ongoing';
+        return 'ended';
+      },
+
+      // 百分比进度（0-100）
+      reservationProgress(now = new Date()) {
+        if (!this.currentReservation) return 0;
+        const dateStr = this.currentReservation.date;
+        const timeslot = this.currentReservation.timeslot;
+        const startEnd = this._getSlotStartEnd(dateStr, timeslot);
+        if (!startEnd) return 0;
+        const { start, end } = startEnd;
+        if (now <= start) return 0;
+        if (now >= end) return 100;
+        const total = end - start;
+        const done = now - start;
+        return Math.max(0, Math.min(100, Math.round((done / total) * 100)));
+      },
+
+      // 时间范围文本
+      reservationRangeText() {
+        if (!this.currentReservation) return '';
+        const slot = this.TIMESLOTS[this.currentReservation.timeslot];
+        const date = this.currentReservation.date;
+        if (!slot || !date) return '';
+        return `${date} ${slot.time}`;
+      },
+
+      // 解析日间/夜间时段的起止时间
+      _getSlotStartEnd(dateStr, timeslot) {
+        try {
+          if (!dateStr || !timeslot) return null;
+          const [y, m, d] = dateStr.split('-').map((v) => parseInt(v));
+          const isDay = timeslot === 'day';
+          if (isDay) {
+            const start = new Date(y, m - 1, d, 8, 0, 0, 0);
+            const end = new Date(y, m - 1, d, 20, 0, 0, 0);
+            return { start, end };
+          }
+          // night: 20:00 - 次日 08:00
+          const start = new Date(y, m - 1, d, 20, 0, 0, 0);
+          const end = new Date(y, m - 1, d + 1, 8, 0, 0, 0);
+          return { start, end };
+        } catch (_e) {
+          return null;
+        }
+      },
       clearPollingTimer() {
         if (this.pollingTimer) clearTimeout(this.pollingTimer);
         this.pollingTimer = null;
@@ -276,7 +397,7 @@
         goTo(`/pages/records/index?month=${this.selectedMonth}`);
       },
       getWeekday(dateStr) {
-        return getWeekday(dateStr);
+        return utilGetWeekday(dateStr);
       },
       getUserProfile() {
         wx.getUserProfile({
@@ -311,54 +432,28 @@
     min-height: 100vh;
   }
 
+  // 顶部英雄区样式（已迁移到PageHero组件）
+  .primary-action {
+    @include btn-primary;
+    height: 72rpx;
+    padding: 0 28rpx;
+    font-size: 28rpx;
+  }
+
   .content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 16rpx 20rpx 20rpx 20rpx;
+    padding: 0 20rpx 20rpx 20rpx;
     overflow-y: auto;
     align-items: stretch;
+    // 与顶部英雄区形成悬浮卡片效果，参考车牌管理页面
+    margin-top: -40rpx;
+    position: relative;
+    z-index: 3;
   }
 
-  .card,
-  .overview-card,
-  .reservation-card,
-  .empty-reservation-card {
-    border-radius: $card-radius;
-    background: $uni-bg-color;
-    box-shadow: $card-shadow;
-    margin-bottom: $card-margin;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .overview-card {
-    border-top: 8rpx solid $main-color;
-    background: $main-color-bg1;
-    min-height: 140rpx;
-    height: 20vh;
-    max-height: 300rpx;
-    box-shadow: $card-shadow-deep;
-  }
-
-  .reservation-card,
-  .empty-reservation-card {
-    min-height: 150rpx;
-    height: 22vh;
-    max-height: 320rpx;
-    background: $main-color-lightest;
-    box-shadow: $card-shadow-deep;
-    border-left: 8rpx solid $main-color;
-  }
-
-  .gradient-bg {
-    background: $main-color-bg1;
-    border: none;
-    box-shadow: $charging-shadow-md;
-  }
+  // 卡片样式（已迁移到HeroCard组件）
 
   .card-header {
     display: flex;
@@ -380,37 +475,50 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 24rpx;
-    height: 56rpx;
-    background: $main-color-lighter;
-    border: 2rpx solid $uni-color-primary;
+    padding: 0 20rpx;
+    height: 48rpx;
+    background: $uni-bg-color;
+    border: 1rpx solid $uni-border-color;
     border-radius: 28rpx;
-    font-size: 30rpx;
-    color: $main-color-dark;
-    font-weight: bold;
-    box-shadow: $charging-shadow-sm;
+    font-size: 28rpx;
+    color: $text-main;
+    font-weight: 600;
+    box-shadow: none;
     cursor: pointer;
     position: relative;
   }
-  .card-header-flex .month-picker::after {
+  .card-header-flex   .month-picker::after {
     content: '';
     display: inline-block;
-    margin-left: 10rpx;
+    margin-left: 8rpx;
     width: 0;
     height: 0;
-    border-left: 10rpx solid transparent;
-    border-right: 10rpx solid transparent;
-    border-top: 10rpx solid $uni-color-primary;
+    border-left: 8rpx solid transparent;
+    border-right: 8rpx solid transparent;
+    border-top: 8rpx solid $uni-color-primary;
   }
   .card-header-flex .card-title {
     flex: 1;
     text-align: center;
     margin: 0;
   }
-  .card-header-flex .card-more {
+  .card-link {
     min-width: 100rpx;
     text-align: right;
     margin: 0;
+    font-size: 26rpx;
+    color: $uni-text-color;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
+    cursor: pointer;
+    
+    .link-arrow {
+      font-size: 20rpx;
+      color: $uni-text-color;
+      opacity: 0.6;
+    }
   }
 
   .card-title {
@@ -427,13 +535,21 @@
   .overview-data {
     display: flex;
     justify-content: space-around;
+    align-items: center;
+    padding: 8rpx 12rpx 16rpx;
   }
 
   .data-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 6rpx;
+    flex: 1;
   }
+  // 移除图标容器与分隔线（回归简洁）
+  .data-icon-wrapper,
+  .data-content,
+  .data-divider { display: none; }
 
   .data-value {
     font-size: 40rpx;
@@ -444,22 +560,39 @@
 
   .data-value.big,
   .data-value.big.main-color {
-    font-size: 56rpx;
+    font-size: 48rpx;
     font-weight: bold;
     color: $main-color-deep;
-    margin-bottom: 4rpx;
+    margin-bottom: 0;
+    line-height: 1.2;
   }
   .data-value.big.blue-color {
-    font-size: 56rpx;
+    font-size: 48rpx;
     font-weight: bold;
-    color: $uni-color-info;
-    margin-bottom: 4rpx;
+    color: $text-main; // 收敛颜色，避免与主题色冲突
+    margin-bottom: 0;
+    line-height: 1.2;
+  }
+  .data-row {
+    display: flex;
+    align-items: baseline; // 数值与单位基线对齐
+    gap: 8rpx;
+  }
+  
+
+  .data-unit {
+    font-size: 24rpx;
+    color: $text-sub;
+    font-weight: 500;
+    margin-bottom: 0;
   }
 
   .data-label {
-    font-size: 26rpx;
+    font-size: 24rpx;
     color: $text-sub;
+    font-weight: 500;
   }
+  .gray-label { color: $text-sub; }
 
   .month-picker {
     display: inline-block;
@@ -478,6 +611,58 @@
     flex-shrink: 1;
     max-height: 100%;
     overflow: auto;
+  }
+  .reservation-header {
+    margin-bottom: 12rpx;
+  }
+  .status-badge {
+    font-size: 22rpx;
+    font-weight: 600;
+    padding: 6rpx 12rpx;
+    border-radius: 999rpx;
+    color: #fff;
+  }
+  .status-upcoming {
+    background: linear-gradient(135deg, #409eff, #2f7bd1);
+  }
+  .status-ongoing {
+    background: linear-gradient(135deg, #67c23a, #4cab2f);
+  }
+  .status-ended {
+    background: linear-gradient(135deg, #909399, #707276);
+  }
+
+  .reservation-progress {
+    padding: 0 20rpx 20rpx;
+  }
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12rpx;
+    font-size: 24rpx;
+    color: $text-sub;
+  }
+  .progress-time {
+    color: $text-main;
+    font-weight: 600;
+  }
+  .progress-percent {
+    color: $uni-color-primary;
+    font-weight: 700;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 12rpx;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 12rpx;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: $charging-gradient-primary;
+    width: 0;
+    transition: width 0.3s ease;
   }
   .reservation-info-main {
     display: flex;
@@ -556,9 +741,9 @@
     align-items: center;
     justify-content: center;
     background: $uni-bg-color;
-    border: 2rpx dashed $uni-color-primary;
-    box-shadow: none;
-    padding: 28rpx 24rpx;
+    border: 1rpx solid $uni-border-color;
+    box-shadow: $card-shadow;
+    padding: 24rpx 20rpx;
   }
   .empty-reservation {
     width: 100%;
@@ -567,30 +752,22 @@
     align-items: center;
     justify-content: center;
     min-height: 64rpx;
+    gap: 8rpx;
   }
   .empty-text {
     font-size: 28rpx;
     color: $uni-color-primary;
-    margin-bottom: 16rpx;
+    margin-bottom: 0;
   }
-  .go-reservation-btn {
-    background: $charging-gradient-primary;
-    color: $uni-text-color-inverse;
-    border: none;
-    border-radius: 24rpx;
-    font-size: 26rpx;
-    font-weight: bold;
-    padding: 8rpx 32rpx;
-    box-shadow: $charging-shadow-sm;
-    transition: opacity 0.2s;
+  .empty-desc {
+    font-size: 24rpx;
+    color: $text-sub;
+    text-align: center;
   }
-  .go-reservation-btn:active {
-    opacity: 0.8;
-  }
+
   // 重要按钮主色高亮，禁用态灰色
   button,
-  .card-more-btn,
-  .go-reservation-btn {
+  .card-more-btn {
     background: $charging-gradient-primary;
     color: $uni-text-color-inverse;
     border: none;
@@ -602,8 +779,7 @@
     transition: opacity 0.2s;
   }
   button:disabled,
-  .card-more-btn:disabled,
-  .go-reservation-btn:disabled {
+  .card-more-btn:disabled {
     background: $uni-bg-color-hover;
     color: $uni-text-color-disable;
     box-shadow: none;
@@ -616,34 +792,40 @@
     font-size: 22rpx;
     margin-left: 8rpx;
   }
+  // 功能区域样式（简洁化）
+  .function-section {
+    margin-top: 20rpx; // 与英雄区拉开距离更紧凑
+  }
+
+  .function-section-spaced {
+    padding-bottom: 8rpx;
+  }
+
   .function-grid-new {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $function-gap;
-    margin-top: 20rpx;
+    gap: 24rpx; // 上下列间距略小
+    margin-top: 8rpx;
     margin-bottom: 0;
     min-height: 240rpx;
-    height: 44vh;
-    max-height: 600rpx;
+    height: auto;
   }
   .function-item-new {
     background: #fff;
     border-radius: $card-radius;
-    box-shadow: $card-shadow-deep;
+    box-shadow: $card-shadow;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200rpx;
-    padding: 56rpx 0 48rpx 0;
-    transition:
-      box-shadow 0.2s,
-      transform 0.2s;
+    min-height: 176rpx; // 更高一点
+    padding: 32rpx 0 24rpx 0;
+    transition: box-shadow 0.2s, transform 0.2s;
     cursor: pointer;
     margin-bottom: 0;
   }
   .function-item-new:active {
-    box-shadow: 0 8rpx 24rpx rgba(212, 107, 8, 0.15);
+    box-shadow: 0 6rpx 18rpx rgba(212, 107, 8, 0.15);
     transform: scale(0.97);
   }
   .function-icon-bg-new {
@@ -653,11 +835,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12rpx;
+    margin-bottom: 8rpx;
     color: $main-color;
   }
   .function-title-new {
-    font-size: 28rpx;
+    font-size: 26rpx;
     color: $text-main;
     font-weight: bold;
     margin-top: 0;
@@ -665,14 +847,25 @@
   // 响应式适配
   @media (max-width: 400px) {
     .content {
-      padding: 16rpx 4rpx 12rpx 4rpx;
+      padding: 0 4rpx 12rpx 4rpx;
     }
     .card {
       padding: 16rpx 8rpx;
       border-radius: 12rpx;
     }
-    .function-item {
-      padding: 18rpx;
+    .function-item-new {
+      padding: 20rpx;
+    }
+    .function-icon-bg-new {
+      width: 64rpx;
+      height: 64rpx;
+      margin-right: 16rpx;
+    }
+    .function-title-new {
+      font-size: 28rpx;
+    }
+    .function-desc {
+      font-size: 22rpx;
     }
     .data-value.big {
       font-size: 40rpx;
@@ -681,24 +874,20 @@
 
   @media (min-height: 700px) {
     .overview-card {
-      height: 20vh;
-      max-height: 400rpx;
+      height: 22vh;
+      max-height: 420rpx;
     }
     .overview-card .overview-data {
-      gap: 48rpx;
+      gap: 60rpx;
     }
     .reservation-card,
     .empty-reservation-card {
-      height: 20vh;
-    }
-    .function-grid-new {
-      height: 32vh;
+      height: 22vh; // 更高一点
     }
   }
   // 按钮active反馈
   button:active,
-  .card-more-btn:active,
-  .go-reservation-btn:active {
+  .card-more-btn:active {
     background: $charging-gradient-primary;
     color: $uni-text-color-inverse;
     transform: scale(0.97);
