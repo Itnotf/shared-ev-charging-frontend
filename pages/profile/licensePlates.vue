@@ -3,7 +3,7 @@
     <PageHero
       title="车牌管理"
       subtitle="新能源 · 绿色出行"
-      :height="260"
+      :height="200"
       bgClass="gradient-purple"
     />
 
@@ -11,15 +11,6 @@
       <!-- 添加车牌号区域 -->
       <view class="add-section">
         <view class="add-card">
-          <view class="add-header">
-            <view class="add-icon">
-              <uni-icons type="plusempty" size="32" color="#FFA500" />
-            </view>
-            <view class="add-title">
-              <text class="add-title-text">添加新能源车牌</text>
-              <text class="add-title-desc">支持传统车牌和新能源车牌</text>
-            </view>
-          </view>
           
           <view class="add-form">
             <view class="input-container">
@@ -48,10 +39,6 @@
               <uni-icons v-if="!adding" type="plusempty" size="20" color="#fff" />
               <text>{{ adding ? '添加中...' : '添加车牌' }}</text>
             </button>
-            <view class="input-hints">
-              <text class="hint">示例：沪AD12345 / 沪A·D12345</text>
-              <text class="hint secondary">支持传统车牌与新能源车牌（自动大写）</text>
-            </view>
           </view>
           
           <view v-if="plateError" class="error-message">

@@ -1,8 +1,18 @@
 <template>
   <view class="container">
+    <!-- 轻量级页面标题区域 - 只在有当前预约时显示 -->
+    <view v-if="currentReservation" class="page-header">
+      <view class="header-content">
+        <view class="current-status">
+          <text class="status-text">当前预约中</text>
+          <view class="status-dot"></view>
+        </view>
+      </view>
+    </view>
+
     <view class="content">
       <!-- 日历视图 -->
-      <CommonCard customClass="card">
+      <CommonCard customClass="card calendar-card">
         <view class="calendar-header-bar">
           <uni-icons
             type="left"
@@ -20,9 +30,7 @@
             @click="!currentReservation && nextMonth()"
           />
         </view>
-        <view class="card-header">
-          <text class="card-title">选择日期</text>
-        </view>
+        <!-- 移除选择日期标题 -->
         <view class="calendar">
           <view class="calendar-header">
             <view v-for="(day, index) in weekDays" :key="index" class="week-day">{{ day }}</view>
@@ -35,11 +43,12 @@
                 'calendar-day',
                 {
                   selected: day.date === selectedDate,
-                  disabled: currentReservation && day.date !== selectedDate, // 只保留当前预约限制
+                  disabled: currentReservation && day.date !== selectedDate,
                   full: getReservedSlots(day.date).length === 2,
                   today: day.date === today,
                   'not-current-month': !day.isCurrentMonth,
                   weekend: isWeekend(day),
+                  'has-reservation': getReservedSlots(day.date).length > 0,
                 },
               ]"
               @click="!currentReservation && selectDate(day.date)"
@@ -67,16 +76,17 @@
                     >🌙</text
                   >
                 </view>
+                <!-- 预约状态指示器 -->
+                <view v-if="getReservedSlots(day.date).length > 0" class="reservation-indicator"></view>
               </view>
             </view>
           </view>
         </view>
       </CommonCard>
+      
       <!-- 时段选择 -->
-      <CommonCard v-if="selectedDate" customClass="card">
-        <view class="card-header">
-          <text class="card-title">选择时段</text>
-        </view>
+      <CommonCard v-if="selectedDate" customClass="card time-slot-card">
+        <!-- 移除选择时段标题 -->
         <view class="time-slots">
           <view
             :class="[
@@ -84,6 +94,8 @@
               {
                 selected: selectedTimeSlot === 'day',
                 disabled: currentReservation && selectedTimeSlot !== 'day',
+                available: !reservations[selectedDate + '_day'],
+                reserved: reservations[selectedDate + '_day'],
               },
             ]"
             @click="!currentReservation && selectTimeSlot('day')"
@@ -122,6 +134,8 @@
                 <text class="time-slot-time-block">{{ TIMESLOTS.day.time }}</text>
               </view>
             </view>
+            <!-- 预约状态徽章 -->
+            <view v-if="reservations[selectedDate + '_day']" class="reserved-badge">已预约</view>
           </view>
           <view
             :class="[
@@ -129,6 +143,8 @@
               {
                 selected: selectedTimeSlot === 'night',
                 disabled: currentReservation && selectedTimeSlot !== 'night',
+                available: !reservations[selectedDate + '_night'],
+                reserved: reservations[selectedDate + '_night'],
               },
             ]"
             @click="!currentReservation && selectTimeSlot('night')"
@@ -167,28 +183,42 @@
                 <text class="time-slot-time-block">{{ TIMESLOTS.night.time }}</text>
               </view>
             </view>
+            <!-- 预约状态徽章 -->
+            <view v-if="reservations[selectedDate + '_night']" class="reserved-badge">已预约</view>
           </view>
         </view>
       </CommonCard>
+      
       <!-- 车牌号选择 -->
-      <CommonCard v-if="selectedDate && selectedTimeSlot && !currentReservation" customClass="card">
-        <view class="card-header">
-          <text class="card-title">选择车牌号</text>
-        </view>
+      <CommonCard v-if="selectedDate && selectedTimeSlot && !currentReservation" customClass="card license-card">
+        <!-- 移除选择车牌号标题 -->
         <LicensePlateSelector v-model="selectedLicensePlate" @change="onLicensePlateChange" />
       </CommonCard>
 
-      <!-- 确认按钮 -->
-      <button
-        v-if="selectedDate && selectedTimeSlot && selectedLicensePlate && !currentReservation"
-        class="confirm-btn"
-        @click="confirmReservation"
-      >
-        确认预约
-      </button>
-      <!-- 取消预约按钮 -->
-      <view v-if="currentReservation" style="margin-top: 40rpx">
-        <button class="cancel-btn" @click="cancelCurrentReservation">取消预约</button>
+      <!-- 操作按钮区域 - 在内容区域内 -->
+      <view v-if="(selectedDate && selectedTimeSlot && !currentReservation) || currentReservation" class="action-section-fixed">
+        <!-- 确认按钮 -->
+        <button
+          v-if="selectedDate && selectedTimeSlot && selectedLicensePlate && !currentReservation"
+          class="confirm-btn"
+          @click="confirmReservation"
+        >
+          确认预约
+        </button>
+        
+        <!-- 提示信息 - 当选择了时段但还没选择车牌时 -->
+        <view v-if="selectedDate && selectedTimeSlot && !selectedLicensePlate && !currentReservation" class="action-hint">
+          <text class="hint-text">请选择车牌号完成预约</text>
+        </view>
+        
+        <!-- 取消预约按钮 -->
+        <button
+          v-if="currentReservation"
+          class="cancel-btn"
+          @click="cancelCurrentReservation"
+        >
+          取消预约
+        </button>
       </view>
     </view>
   </view>
@@ -618,10 +648,47 @@
     background-color: $bg;
   }
 
+  .page-header {
+    padding: 16rpx 20rpx 0;
+    background-color: $uni-bg-color;
+    border-bottom: 1rpx solid $uni-border-color;
+    box-shadow: $charging-shadow-sm;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 8rpx;
+  }
+
+  .current-status {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05));
+    border: 1rpx solid rgba(255, 165, 0, 0.2);
+    border-radius: 20rpx;
+    padding: 4rpx 12rpx;
+    font-size: 24rpx;
+    font-weight: 500;
+    color: $uni-color-warning;
+    box-shadow: 0 2rpx 8rpx rgba(255, 165, 0, 0.1);
+  }
+
+  .status-dot {
+    width: 12rpx;
+    height: 12rpx;
+    background-color: $uni-color-warning;
+    border-radius: 50%;
+    margin-left: 8rpx;
+  }
+
   .content {
     flex: 1;
     padding: 20rpx;
     overflow-y: auto;
+    
+    /* 按钮现在在内容区域内，不需要额外的底部空间 */
   }
 
   .card {
@@ -635,12 +702,25 @@
 
   .card-header {
     margin-bottom: 20rpx;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8rpx;
+      left: 0;
+      width: 40rpx;
+      height: 4rpx;
+      background: linear-gradient(90deg, $uni-color-primary, #f39c12);
+      border-radius: 2rpx;
+    }
   }
 
   .card-title {
     font-size: $uni-font-size-lg;
     font-weight: bold;
     color: $uni-text-color;
+    position: relative;
   }
 
   .calendar {
@@ -658,95 +738,209 @@
     text-align: center;
     font-size: $uni-font-size-base;
     color: $uni-text-color-grey;
+    font-weight: 500;
   }
 
   .calendar-body {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8rpx;
+    width: 100%;
   }
 
   .calendar-day {
-    width: 14.28%;
-    height: 80rpx;
+    aspect-ratio: 1;
+    min-height: 80rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10rpx;
-    transition: background-color 0.2s;
     position: relative;
-    z-index: 1;
     background: $uni-bg-color;
-    transition: background 0.2s;
     border-radius: $uni-border-radius-sm;
-    border: none;
+    border: 2rpx solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    
+    &:hover {
+      transform: translateY(-2rpx);
+      box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    }
+    
+    &.has-reservation {
+      border-color: rgba(255, 165, 0, 0.3);
+      background: linear-gradient(135deg, #fff8f0, #fff0e0);
+      
+      &:hover {
+        border-color: rgba(255, 165, 0, 0.6);
+        box-shadow: 0 6rpx 16rpx rgba(255, 165, 0, 0.2);
+      }
+    }
   }
 
   .calendar-day.full {
-    background: $uni-bg-color-grey !important;
-  }
-
-  .calendar-day.other-month {
-    color: $uni-text-color-disable;
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8) !important;
+    border-color: #ddd;
+    
+    &::after {
+      content: '满';
+      position: absolute;
+      top: 4rpx;
+      right: 4rpx;
+      background: $uni-text-color-disable;
+      color: white;
+      font-size: 18rpx;
+      padding: 2rpx 6rpx;
+      border-radius: 8rpx;
+      line-height: 1;
+      z-index: 3;
+    }
   }
 
   .calendar-day.disabled {
     background-color: $uni-bg-color-hover;
     color: $uni-text-color-disable;
     cursor: not-allowed;
+    opacity: 0.6;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
   }
 
   .calendar-day.selected {
     border: 2rpx solid $uni-color-success !important;
-    background: $uni-bg-color;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
     border-radius: $uni-border-radius-sm;
     box-sizing: border-box;
+    transform: scale(1.05);
+    box-shadow: 0 6rpx 20rpx rgba(103, 194, 58, 0.3);
+    z-index: 2;
+    
+    .calendar-day-number {
+      color: $uni-color-success;
+      font-weight: 600;
+    }
   }
+  
   .calendar-day.not-current-month {
     color: $uni-text-color-disable;
     background: $uni-bg-color-hover;
+    opacity: 0.5;
   }
+  
   .calendar-day.weekend {
     color: $uni-color-error;
+    
+    .calendar-day-number {
+      font-weight: 500;
+    }
   }
-  .calendar-day[data-has-reservation='true'] {
-    border: 2rpx solid $uni-color-primary;
-    position: relative;
-  }
-  .calendar-day .reservation-dot {
-    position: absolute;
-    bottom: 10rpx;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 28rpx;
-    height: 28rpx;
-    border-radius: 50%;
-    background: $uni-color-primary;
-    box-shadow: $charging-shadow-sm;
-    border: 2rpx solid $uni-bg-color;
+  
+  .calendar-day.today {
+    border: 2rpx solid $uni-color-info;
+    box-sizing: border-box;
+    border-radius: 8rpx;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
     z-index: 2;
-  }
-  .calendar-day .half-dot {
-    position: absolute;
-    left: 50%;
-    width: 28rpx;
-    height: 14rpx;
-    background: $uni-color-primary;
-    transform: translateX(-50%);
-    z-index: 2;
-    box-shadow: $charging-shadow-sm;
-    border: 2rpx solid $uni-bg-color;
-  }
-  .half-dot.day {
-    bottom: 10rpx;
-    border-radius: 14rpx 14rpx 0 0;
-  }
-  .half-dot.night {
-    bottom: 10rpx;
-    border-radius: 0 0 14rpx 14rpx;
+    
+    .calendar-day-number {
+      color: $uni-color-info;
+      font-weight: 600;
+    }
   }
 
-  .calendar-day:not(.disabled):not(.selected):active {
-    background-color: $uni-bg-color-hover;
+  .calendar-day-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .calendar-day-number {
+    font-size: 30rpx;
+    color: $uni-text-color;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    line-height: 1;
+  }
+
+  .calendar-day-number.weekend {
+    color: $uni-color-error;
+  }
+
+  .calendar-day-number.not-current-month {
+    color: $uni-text-color-disable !important;
+  }
+
+  .today-corner {
+    position: absolute;
+    left: 2rpx;
+    top: 2rpx;
+    font-size: 18rpx;
+    color: $uni-text-color-inverse;
+    background: linear-gradient(135deg, $uni-color-success, #52c41a);
+    border-radius: $uni-border-radius-sm;
+    padding: 0 6rpx;
+    z-index: 3;
+    line-height: 1.2;
+    box-shadow: 0 2rpx 4rpx rgba(103, 194, 58, 0.3);
+  }
+
+  .icon-row {
+    position: absolute;
+    left: 50%;
+    bottom: 2rpx;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 4rpx;
+    z-index: 2;
+  }
+
+  .icon-sun {
+    font-size: 22rpx;
+    color: $uni-color-primary;
+    margin-right: 2rpx;
+    text-shadow: none;
+    transition: all 0.2s ease;
+  }
+
+  .icon-moon {
+    font-size: 22rpx;
+    color: $uni-color-info;
+    text-shadow: none;
+    transition: all 0.2s ease;
+  }
+
+  .icon-selected {
+    color: $uni-color-warning !important;
+    text-shadow:
+      0 0 4rpx $uni-bg-color,
+      0 0 2rpx $uni-bg-color;
+    transform: scale(1.2);
+  }
+
+  .reservation-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: $uni-border-radius-sm;
+    background-color: rgba(255, 165, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1;
+  }
+
+  .calendar-day:hover .reservation-indicator {
+    opacity: 1;
   }
 
   .time-slots {
@@ -757,17 +951,59 @@
 
   .time-slot {
     padding: $uni-spacing-col-base;
-    border: 1rpx solid $uni-border-color;
+    border: 2rpx solid transparent;
     border-radius: $uni-border-radius-sm;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.2s;
-  }
-
-  .time-slot.selected {
-    border-color: $uni-color-primary;
-    background-color: rgba(255, 165, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+    &.available {
+      border-color: #e8f5e8;
+      background: linear-gradient(135deg, #f8fff8, #f0fff0);
+      
+      &:hover {
+        border-color: $uni-color-success;
+        transform: translateY(-2rpx);
+        box-shadow: 0 8rpx 24rpx rgba(103, 194, 58, 0.15);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 4rpx 12rpx rgba(103, 194, 58, 0.15);
+      }
+    }
+    
+    &.reserved {
+      background: linear-gradient(135deg, #fff8f0, #fff0e0);
+      border-color: #ffe0b2;
+      opacity: 0.9;
+      
+      &:hover {
+        opacity: 1;
+        transform: translateY(-1rpx);
+      }
+    }
+    
+    &.selected {
+      border-color: $uni-color-primary;
+      background: linear-gradient(135deg, #fff8f0, #fff0e0);
+      box-shadow: 0 8rpx 24rpx rgba(255, 165, 0, 0.2);
+      transform: translateY(-2rpx);
+    }
+    
+    &.disabled {
+      background: $uni-bg-color-hover;
+      opacity: 0.6;
+      cursor: not-allowed;
+      
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
   }
 
   .time-slot-name {
@@ -782,239 +1018,84 @@
     color: $uni-text-color-grey;
   }
 
-  .reserved-info {
-    margin-top: 8rpx;
-    font-size: $uni-font-size-sm;
-    color: $uni-text-color-grey;
+  .action-section {
     display: flex;
-    flex-direction: column;
-  }
-  .reserved-user {
-    color: $uni-color-warning;
-  }
-  .reserved-time {
-    color: $uni-text-color-disable;
-    font-size: 22rpx;
-  }
-
-  .reserved-info-inline {
-    color: $uni-text-color-grey;
-    font-size: $uni-font-size-sm;
-    margin-left: 0;
-  }
-
-  .reserved-info-block {
-    margin-top: 8rpx;
-    color: $uni-text-color-grey;
-    font-size: $uni-font-size-sm;
-    line-height: 1.6;
-  }
-
-  .confirm-btn {
+    justify-content: center;
     margin-top: 40rpx;
-    background-color: $uni-color-primary;
-    color: $uni-text-color-inverse;
-    border: none;
-    border-radius: $uni-border-radius-sm;
-    font-size: $uni-font-size-lg;
-    font-weight: bold;
-    padding: $uni-spacing-col-base 0;
-    transition: opacity 0.2s;
   }
 
-  .confirm-btn:active {
-    opacity: 0.8;
+  .calendar-card,
+  .time-slot-card,
+  .license-card {
+    animation: slideInUp 0.5s ease-out;
+    border: 1rpx solid rgba(255, 165, 0, 0.1);
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+    
+    &:hover {
+      box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.12);
+    }
   }
 
-  .cancel-btn {
-    margin-top: 40rpx;
-    background-color: $uni-color-primary;
-    color: $uni-text-color-inverse;
-    border: none;
-    border-radius: $uni-border-radius-sm;
-    font-size: $uni-font-size-lg;
-    font-weight: bold;
-    padding: $uni-spacing-col-base 0;
-    transition: opacity 0.2s;
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30rpx);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .cancel-btn:active {
-    opacity: 0.8;
-  }
-
-  .current-reservation-info {
-    text-align: center;
-    font-size: 30rpx;
-  }
-  .time-slot-info-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .slot-label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .time-slot-info-block {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .info-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .time-row {
-    margin-top: 2rpx;
-  }
-  .time-slot-time-block {
-    color: $uni-text-color-disable;
-    font-size: $uni-font-size-sm;
-    line-height: 1.6;
-  }
-  .corner-tag {
-    position: absolute;
-    font-size: 18rpx;
-    padding: 0 8rpx;
-    border-radius: $uni-border-radius-sm;
-    color: $uni-text-color-inverse;
-    z-index: 2;
-    line-height: 1.4;
-  }
-  .day-tag {
-    left: 2rpx;
-    bottom: 2rpx;
-    background: $uni-color-primary;
-  }
-  .night-tag {
-    right: 2rpx;
-    bottom: 2rpx;
-    background: $uni-color-info;
-  }
-  .full-tag {
-    right: 2rpx;
-    top: 2rpx;
-    background: $uni-text-color-disable;
-    color: $uni-text-color-inverse;
-    font-size: 16rpx;
-    padding: 0 6rpx;
-  }
-  .icon-row {
-    position: absolute;
-    left: 50%;
-    bottom: 2rpx;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: row;
-    gap: 4rpx;
-    z-index: 2;
-  }
-  .icon-sun {
-    font-size: 22rpx;
-    color: $uni-color-primary;
-    margin-right: 2rpx;
-    text-shadow: none;
-  }
-  .icon-moon {
-    font-size: 22rpx;
-    color: $uni-color-info;
-    text-shadow: none;
-  }
-  .icon-selected {
-    color: $uni-color-warning !important;
-    text-shadow:
-      0 0 4rpx $uni-bg-color,
-      0 0 2rpx $uni-bg-color;
-  }
-  .today-dot {
-    position: absolute;
-    left: 50%;
-    bottom: 32rpx;
-    transform: translateX(-50%);
-    width: 10rpx;
-    height: 10rpx;
-    border-radius: 50%;
-    background: $uni-color-info;
-    z-index: 3;
-  }
-  .calendar-day.today {
-    border: 2rpx solid $uni-color-info;
-    box-sizing: border-box;
-    border-radius: 50%;
-  }
   .calendar-header-bar {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12rpx;
+    padding: 16rpx 0;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12rpx;
+    margin: 0 -16rpx 20rpx -16rpx;
   }
+
   .calendar-header-title {
     flex: 1;
     text-align: center;
     font-size: 30rpx;
     font-weight: bold;
     color: $uni-text-color;
+    text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
   }
-  .calendar-arrow {
-    font-size: 36rpx;
+
+  .calendar-nav-icon {
     color: $uni-text-color;
-    padding: 0 16rpx;
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.2s;
+    padding: 8rpx;
+    border-radius: 8rpx;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: rgba(255, 165, 0, 0.1);
+      color: $uni-color-primary;
+    }
+    
+    &.disabled {
+      color: $uni-text-color-disable;
+      cursor: not-allowed;
+      
+      &:hover {
+        background: transparent;
+        color: $uni-text-color-disable;
+      }
+    }
   }
-  .calendar-arrow.disabled {
-    color: $uni-text-color-disable;
-    cursor: not-allowed;
-  }
-  .calendar-day-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .calendar-day-number {
-    font-size: 30rpx;
-    color: $uni-text-color;
-    font-weight: 500;
-  }
-  .calendar-day-number.weekend {
-    color: $uni-color-error;
-  }
-  .calendar-day-number.not-current-month {
-    color: $uni-text-color-disable !important;
-  }
-  .today-corner {
-    position: absolute;
-    left: 2rpx;
-    top: 2rpx;
-    font-size: 18rpx;
-    color: $uni-text-color-inverse;
-    background: $uni-color-success;
-    border-radius: $uni-border-radius-sm;
-    padding: 0 6rpx;
-    z-index: 3;
-    line-height: 1.2;
-  }
-  /* 样式部分 */
-  .calendar-day,
-  .calendar-day.selected,
-  .calendar-day.today {
-    border-radius: 8rpx !important;
-    border: none;
-    box-sizing: border-box;
-  }
+
   .reserved-info-avatar-tag {
     display: flex;
     align-items: center;
     margin-left: 8rpx;
+    animation: fadeIn 0.3s ease-out;
   }
+
   .avatar-img {
     width: 32rpx;
     height: 32rpx;
@@ -1022,15 +1103,24 @@
     margin-right: 8rpx;
     background: $uni-bg-color-hover;
     object-fit: cover;
+    border: 2rpx solid rgba(255, 165, 0, 0.3);
   }
+
   .reserved-tag {
     display: inline-block;
-    background: rgba(255, 165, 0, 0.2);
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.2), rgba(255, 165, 0, 0.1));
     color: $uni-color-warning;
     border-radius: 16rpx;
     padding: 4rpx 16rpx;
     font-size: 22rpx;
     font-weight: 500;
+    border: 1rpx solid rgba(255, 165, 0, 0.3);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 165, 0, 0.2));
+      transform: translateY(-1rpx);
+    }
 
     .license-plate-tag {
       display: block;
@@ -1040,16 +1130,350 @@
     }
   }
 
-  // 添加图标样式类
-  .calendar-nav-icon {
-    color: $uni-text-color;
+  .time-slot-check {
+    color: $uni-color-primary;
+    animation: bounceIn 0.3s ease-out;
+  }
 
-    &.disabled {
-      color: $uni-text-color-disable;
+  // 添加缺失的样式
+  .time-slot-info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .time-row {
+    margin-top: 2rpx;
+  }
+
+  .time-slot-time-block {
+    color: $uni-text-color-disable;
+    font-size: $uni-font-size-sm;
+    line-height: 1.6;
+  }
+
+  .reserved-badge {
+    position: absolute;
+    top: 10rpx;
+    right: 10rpx;
+    background-color: $uni-color-warning;
+    color: $uni-text-color-inverse;
+    border-radius: $uni-border-radius-sm;
+    padding: 4rpx 10rpx;
+    font-size: 20rpx;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2rpx 8rpx rgba(230, 162, 60, 0.3);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10rpx);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
-  .time-slot-check {
-    color: $uni-color-primary;
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  // 响应式优化
+  @media (max-width: 750rpx) {
+    .action-section-fixed {
+      padding: 16rpx 20rpx;
+      box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.1);
+    }
+    
+    .calendar-day {
+      height: 70rpx;
+      
+      .calendar-day-number {
+        font-size: 26rpx;
+      }
+    }
+    
+    .time-slot {
+      padding: 24rpx;
+      
+      .time-slot-name {
+        font-size: 32rpx;
+      }
+    }
+    
+    .confirm-btn,
+    .cancel-btn {
+      height: 72rpx;
+      padding: 0 32rpx;
+      font-size: 30rpx;
+      max-width: none;
+      border-radius: 36rpx;
+      
+      &:hover {
+        transform: none;
+      }
+      
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+    
+    .page-header {
+      padding: 16rpx 16rpx 0;
+    }
+    
+    .page-subtitle {
+      font-size: $uni-font-size-sm;
+    }
+    
+    .content {
+      padding: 16rpx 20rpx;
+    }
+  }
+
+  // 触摸优化
+  .calendar-day,
+  .time-slot {
+    -webkit-tap-highlight-color: transparent;
+    
+    &:active {
+      -webkit-tap-highlight-color: rgba(255, 165, 0, 0.1);
+    }
+  }
+
+  // 卡片间距优化
+  .card {
+    margin-bottom: 16rpx;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // 紧凑布局优化
+  .compact-section {
+    .card {
+      margin-bottom: 0;
+    }
+  }
+
+  // 按钮区域优化 - 在内容区域内
+  .action-section-fixed {
+    background: $uni-bg-color;
+    border-radius: $uni-border-radius-lg;
+    padding: 24rpx;
+    box-shadow: $charging-shadow-sm;
+    border: 1rpx solid $uni-border-color;
+    display: flex;
+    justify-content: center;
+    margin-top: 20rpx; /* 与上方内容保持间距 */
+  }
+
+  // 确认按钮样式优化
+  .confirm-btn {
+    width: 100%;
+    max-width: 500rpx;
+    @include btn-primary;
+    height: 80rpx;
+    padding: 0 40rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    border-radius: 40rpx;
+    transition: all 0.2s ease;
+    box-shadow: $charging-shadow-sm;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
+    
+    // 禁用状态
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      
+      &:hover {
+        transform: none;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  // 取消按钮样式优化
+  .cancel-btn {
+    width: 100%;
+    max-width: 500rpx;
+    background: $uni-bg-color;
+    color: $main-color-dark;
+    border: 2rpx solid $main-color-dark;
+    border-radius: 40rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    height: 80rpx;
+    padding: 0 40rpx;
+    transition: all 0.2s ease;
+    box-shadow: $charging-shadow-sm;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      background: $main-color-dark;
+      color: $uni-text-color-inverse;
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
+    
+    // 禁用状态
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      
+      &:hover {
+        transform: none;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  // 提示信息样式
+  .action-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16rpx 24rpx;
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05));
+    border: 1rpx solid rgba(255, 165, 0, 0.2);
+    border-radius: 16rpx;
+    margin: 0 20rpx;
+    
+    .hint-text {
+      font-size: $uni-font-size-base;
+      color: $uni-color-warning;
+      font-weight: 500;
+      text-align: center;
+    }
+  }
+
+  // 页面内容区域优化
+  .content {
+    flex: 1;
+    padding: 20rpx;
+    overflow-y: auto;
+    
+    /* 按钮现在在内容区域内，不需要额外的底部空间 */
+  }
+
+  // 日历卡片特殊样式
+  .calendar-card {
+    margin-bottom: 20rpx;
+    
+    .calendar {
+      margin-top: 0; /* 去掉标题后，日历直接显示 */
+    }
+  }
+
+  // 时段选择卡片优化
+  .time-slot-card {
+    .time-slots {
+      gap: 16rpx;
+      margin-top: 0; /* 去掉标题后，时段选择直接显示 */
+    }
+    
+    .time-slot {
+      padding: 20rpx;
+      
+      &.selected {
+        transform: translateY(-1rpx);
+      }
+    }
+  }
+
+  // 车牌选择卡片优化
+  .license-card {
+    .card-header {
+      margin-bottom: 16rpx;
+    }
+    
+    /* 去掉标题后，车牌选择器直接显示 */
+    .license-plate-selector {
+      margin-top: 0;
+    }
+  }
+
+  // 状态指示器优化
+  .current-status {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  // 页面标题区域优化
+  .page-header {
+    position: relative;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1rpx;
+      background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.3), transparent);
+    }
   }
 </style>

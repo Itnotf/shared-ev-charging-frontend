@@ -4,7 +4,7 @@
     <PageHero 
       title="澜充小站" 
       subtitle="共享预约 · 绿色充电" 
-      :height="260"
+      :height="200"
       bgClass="gradient-purple"
     >
       <template #actions>
@@ -44,55 +44,60 @@
         </view>
       </HeroCard>
       <!-- 当前预约卡片 -->
-      <HeroCard
-        v-if="currentReservation"
-        type="reservation"
-        cardClass="reservation-card high"
-      >
-        <view class="card-header reservation-header" @click="goToReservationPage">
-          <text class="card-title">当前预约</text>
-          <text class="status-badge" :class="reservationStatusClass">{{ reservationStatusText }}</text>
-        </view>
-        <view class="reservation-info">
-          <view class="reservation-info-main" @click="goToReservationPage">
-            <image
-              v-if="currentReservation.user_avatar"
-              :src="getAvatarUrl(currentReservation.user_avatar)"
-              class="avatar-img"
-            />
-            <view v-else class="avatar-default">👤</view>
-            <view class="reservation-detail">
-              <view class="reservation-user">{{ currentReservation.user_name || '用户' }}</view>
-              <view class="reservation-meta">
-                <text
-                  >{{ currentReservation.date }}（{{ getWeekday(currentReservation.date) }}）</text
-                >
-                <text class="reservation-slot slot-tag">{{
-                  TIMESLOTS[currentReservation.timeslot].name
-                }}</text>
+      <view class="reservation-container">
+        <transition name="reservation-fade" mode="out-in">
+          <HeroCard
+            v-if="currentReservation"
+            type="reservation"
+            cardClass="reservation-card high"
+            key="with-reservation"
+          >
+            <view class="card-header reservation-header" @click="goToReservationPage">
+              <text class="card-title">当前预约</text>
+              <text class="status-badge" :class="reservationStatusClass">{{ reservationStatusText }}</text>
+            </view>
+            <view class="reservation-info">
+              <view class="reservation-info-main" @click="goToReservationPage">
+                <image
+                  v-if="currentReservation.user_avatar"
+                  :src="getAvatarUrl(currentReservation.user_avatar)"
+                  class="avatar-img"
+                />
+                <view v-else class="avatar-default">👤</view>
+                <view class="reservation-detail">
+                  <view class="reservation-user">{{ currentReservation.user_name || '用户' }}</view>
+                  <view class="reservation-meta">
+                    <text
+                      >{{ currentReservation.date }}（{{ getWeekday(currentReservation.date) }}）</text
+                    >
+                    <text class="reservation-slot slot-tag">{{
+                      TIMESLOTS[currentReservation.timeslot].name
+                    }}</text>
+                  </view>
+                </view>
+              </view>
+              <button class="cancel-reservation-btn" @click.stop="cancelCurrentReservation">
+                取消预约
+              </button>
+            </view>
+            <view class="reservation-progress" v-if="currentReservation">
+              <view class="progress-header">
+                <text class="progress-time">{{ reservationTimeRange }}</text>
+                <text class="progress-percent">{{ reservationProgressPercent }}%</text>
+              </view>
+              <view class="progress-bar">
+                <view class="progress-bar-fill" :style="{ width: reservationProgressPercent + '%' }"></view>
               </view>
             </view>
-          </view>
-          <button class="cancel-reservation-btn" @click.stop="cancelCurrentReservation">
-            取消预约
-          </button>
-        </view>
-        <view class="reservation-progress" v-if="currentReservation">
-          <view class="progress-header">
-            <text class="progress-time">{{ reservationTimeRange }}</text>
-            <text class="progress-percent">{{ reservationProgressPercent }}%</text>
-          </view>
-          <view class="progress-bar">
-            <view class="progress-bar-fill" :style="{ width: reservationProgressPercent + '%' }"></view>
-          </view>
-        </view>
-      </HeroCard>
-      <HeroCard v-else type="reservation" cardClass="empty-reservation-card high">
-        <view class="empty-reservation">
-          <text class="empty-text">暂无预约</text>
-          <text class="empty-desc">点击顶部快速预约按钮开始预约</text>
-        </view>
-      </HeroCard>
+          </HeroCard>
+          <HeroCard v-else type="reservation" cardClass="empty-reservation-card high" key="without-reservation">
+            <view class="empty-reservation">
+              <text class="empty-text">暂无预约</text>
+              <text class="empty-desc">点击顶部快速预约按钮开始预约</text>
+            </view>
+          </HeroCard>
+        </transition>
+      </view>
             <!-- 功能宫格区域 -->
       <view class="function-section function-section-spaced">
         <view class="function-grid-new">
@@ -611,9 +616,38 @@
     flex-shrink: 1;
     max-height: 100%;
     overflow: auto;
+    min-height: 80rpx; /* 确保信息区域有最小高度 */
+    padding: 20rpx 0; /* 添加内边距确保高度一致 */
   }
+  
   .reservation-header {
-    margin-bottom: 12rpx;
+    margin-bottom: 16rpx; /* 增加头部间距 */
+    min-height: 48rpx; /* 确保头部有固定高度 */
+  }
+  
+  .reservation-progress {
+    padding: 0 20rpx 20rpx;
+    margin-top: 16rpx; /* 增加与上方内容的间距 */
+    min-height: 60rpx; /* 确保进度条区域有固定高度 */
+  }
+  
+  .reservation-detail {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12rpx; /* 增加间距 */
+    padding-top: 16rpx;
+    min-height: 60rpx; /* 确保详情区域有最小高度 */
+  }
+  
+  .reservation-meta {
+    font-size: 26rpx;
+    color: $text-sub;
+    display: flex;
+    padding-top: 16rpx;
+    gap: 16rpx;
+    align-items: center; /* 确保对齐 */
+    min-height: 40rpx; /* 确保元数据区域有固定高度 */
   }
   .status-badge {
     font-size: 22rpx;
@@ -632,9 +666,6 @@
     background: linear-gradient(135deg, #909399, #707276);
   }
 
-  .reservation-progress {
-    padding: 0 20rpx 20rpx;
-  }
   .progress-header {
     display: flex;
     align-items: center;
@@ -736,7 +767,8 @@
     box-shadow: $charging-shadow-md;
   }
   .empty-reservation-card {
-    min-height: 160rpx;
+    height: 280rpx; /* 固定高度，与有预约的卡片保持一致 */
+    min-height: 280rpx; /* 确保最小高度一致 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -744,25 +776,48 @@
     border: 1rpx solid $uni-border-color;
     box-shadow: $card-shadow;
     padding: 24rpx 20rpx;
+    transition: all 0.3s ease; /* 添加平滑过渡 */
   }
+  
+  .reservation-card {
+    height: 280rpx; /* 固定高度，与无预约的卡片保持一致 */
+    min-height: 280rpx; /* 确保最小高度一致 */
+    transition: all 0.3s ease; /* 添加平滑过渡 */
+  }
+  
+  .reservation-container {
+    height: 320rpx; /* 固定容器高度，包含卡片和间距 */
+    min-height: 320rpx; /* 确保最小高度一致 */
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease; /* 添加平滑过渡 */
+  }
+  
   .empty-reservation {
     width: 100%;
+    height: 100%; /* 占满整个卡片高度 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 64rpx;
-    gap: 8rpx;
+    gap: 16rpx; /* 增加间距 */
+    padding: 0; /* 移除内边距，让内容完全居中 */
   }
+  
   .empty-text {
-    font-size: 28rpx;
+    font-size: 32rpx; /* 增大字体 */
     color: $uni-color-primary;
     margin-bottom: 0;
+    font-weight: 600;
+    line-height: 1.2; /* 确保行高一致 */
   }
+  
   .empty-desc {
-    font-size: 24rpx;
+    font-size: 26rpx; /* 增大字体 */
     color: $text-sub;
     text-align: center;
+    line-height: 1.4;
+    max-width: 200rpx; /* 限制描述文字宽度，确保居中效果 */
   }
 
   // 重要按钮主色高亮，禁用态灰色
@@ -794,7 +849,7 @@
   }
   // 功能区域样式（简洁化）
   .function-section {
-    margin-top: 20rpx; // 与英雄区拉开距离更紧凑
+    margin-top: 32rpx; // 增加与预约卡片的间距，确保布局稳定
   }
 
   .function-section-spaced {
@@ -913,5 +968,27 @@
   }
   .bg-soft-4 {
     background: $main-color-lightest;
+  }
+
+  // 预约卡片切换过渡动画
+  .reservation-fade-enter-active,
+  .reservation-fade-leave-active {
+    transition: all 0.3s ease;
+  }
+  
+  .reservation-fade-enter-from {
+    opacity: 0;
+    transform: translateY(10rpx);
+  }
+  
+  .reservation-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10rpx);
+  }
+  
+  .reservation-fade-enter-to,
+  .reservation-fade-leave-from {
+    opacity: 1;
+    transform: translateY(0);
   }
 </style>

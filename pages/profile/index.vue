@@ -3,7 +3,7 @@
     <PageHero
       :title="heroTitle"
       :subtitle="heroSubtitle"
-      :height="240"
+      :height="200"
       bgClass="gradient-purple"
     >
       <template #subtitle>
