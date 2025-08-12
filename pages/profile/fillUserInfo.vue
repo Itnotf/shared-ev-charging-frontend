@@ -271,30 +271,40 @@
   }
 
   .save-btn {
+    @extend .btn;
     width: 100%;
     margin-top: 32rpx;
-    background: $charging-gradient-primary;
-    color: #fff;
-    border-radius: 20rpx;
-    font-size: 32rpx;
-    height: 96rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12rpx;
-    border: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
     box-shadow: $charging-shadow-sm;
-    transition: all 0.3s ease;
+    letter-spacing: 1rpx;
+    cursor: pointer;
     
-    &:disabled {
-      background: $uni-bg-color-hover;
-      color: $uni-text-color-disable;
-      box-shadow: none;
+    // 悬停效果
+    &:hover {
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
     }
     
-    &:not(:disabled):active {
-      transform: scale(0.97);
-      box-shadow: $charging-shadow-md;
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
+    
+    // 禁用状态
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      background-color: $uni-text-color-disable;
+      
+      &:hover {
+        transform: none;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      }
     }
   }
 </style>

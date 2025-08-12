@@ -124,6 +124,7 @@
     checkAndHandleNeedUploadRecord,
     getWeekday as utilGetWeekday,
     goTo,
+    goToAuth,
     getCurrentDate,
     getAvatarUrl,
     getPayload,
@@ -165,28 +166,28 @@
             icon: 'calendar',
             bgClass: 'bg-soft-1',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goTo('/pages/reservations/index'),
+            onClick: () => goToAuth('/pages/reservations/index'),
           },
           {
             title: '电量上传',
             icon: 'camera',
             bgClass: 'bg-soft-2',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goTo('/pages/records/create'),
+            onClick: () => goToAuth('/pages/records/create'),
           },
           {
             title: '充电记录',
             icon: 'list',
             bgClass: 'bg-soft-3',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goTo(`/pages/records/list?month=${this.selectedMonth}`),
+            onClick: () => goToAuth(`/pages/records/list?month=${this.selectedMonth}`),
           },
           {
             title: '电量分析',
             icon: 'compose',
             bgClass: 'bg-soft-4',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goTo(`/pages/records/index?month=${this.selectedMonth}`),
+            onClick: () => goToAuth(`/pages/records/index?month=${this.selectedMonth}`),
           },
         ],
       };
@@ -396,10 +397,10 @@
         }
       },
       goToReservationPage() {
-        goTo('/pages/reservations/index');
+        goToAuth('/pages/reservations/index');
       },
       goToRecordsPageWithMonth() {
-        goTo(`/pages/records/index?month=${this.selectedMonth}`);
+        goToAuth(`/pages/records/index?month=${this.selectedMonth}`);
       },
       getWeekday(dateStr) {
         return utilGetWeekday(dateStr);

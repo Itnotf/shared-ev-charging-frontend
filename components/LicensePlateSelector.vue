@@ -49,7 +49,7 @@
 
 <script>
 import { getLicensePlates } from '@/api/licensePlate';
-import { getPayload } from '@/utils';
+import { getPayload, goToAuth } from '@/utils';
 
 export default {
   name: 'LicensePlateSelector',
@@ -178,9 +178,7 @@ export default {
 
     goToManagePage() {
       this.closePicker();
-      uni.navigateTo({
-        url: '/pages/profile/licensePlates',
-      });
+      goToAuth('/pages/profile/licensePlates');
     },
   },
 };

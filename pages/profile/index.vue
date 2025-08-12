@@ -10,7 +10,7 @@
         <view class="plate-badge" v-if="userInfo.name && userInfo.name !== '未登录'">
           <text class="plate-text" v-if="defaultPlateNumber">{{ defaultPlateNumber }}</text>
           <text class="plate-text muted" v-else>未设置默认车牌</text>
-          <view class="plate-manage-icon" @click.stop="goTo('/pages/profile/licensePlates')">
+          <view class="plate-manage-icon" @click.stop="goToAuth('/pages/profile/licensePlates')">
             <uni-icons type="gear" size="18" color="#fff" />
           </view>
         </view>
@@ -31,7 +31,7 @@
           <view class="line long" />
         </view>
       </view>
-      <view v-else class="profile-header" @click="goTo('/pages/profile/fillUserInfo')">
+      <view v-else class="profile-header" @click="goToAuth('/pages/profile/fillUserInfo')">
         <image
           v-if="userInfo.avatar && userInfo.avatar !== '👤'"
           :src="getAvatarUrl(userInfo.avatar)"
@@ -60,7 +60,7 @@
         <BaseGroupItem
           icon=""
           title="车牌管理"
-          @click="goTo('/pages/profile/licensePlates')"
+          @click="goToAuth('/pages/profile/licensePlates')"
           rightIcon="right"
         />
         <BaseGroupItem
@@ -87,13 +87,13 @@
         <BaseGroupItem
           icon=""
           title="用户管理"
-          @click="goTo('/pages/profile/userManage')"
+          @click="goToAuth('/pages/profile/userManage')"
           rightIcon="right"
         />
         <BaseGroupItem
           icon=""
           title="月度对账"
-          @click="goTo('/pages/profile/monthlyReport')"
+          @click="goToAuth('/pages/profile/monthlyReport')"
           rightIcon="right"
         />
       </BaseGroup>
@@ -111,7 +111,7 @@
 
   import BaseGroup from '@/components/BaseGroup.vue';
   import BaseGroupItem from '@/components/BaseGroupItem.vue';
-  import { goTo, getAvatarUrl, getPayload } from '@/utils';
+  import { goTo, goToAuth, getAvatarUrl, getPayload } from '@/utils';
   import PageHero from '@/components/PageHero.vue';
   import PageContent from '@/components/PageContent.vue';
   import { getLicensePlates } from '@/api/licensePlate';
@@ -146,10 +146,11 @@
       this.getUserInfo();
     },
     methods: {
-      goTo, // 注册 goTo 方法，指向 util 中的 goTo
+      goTo,
+      goToAuth, // 受保护跳转，未登录将先进入登录页
       handlePrimaryAction() {
         if (this.userInfo.name && this.userInfo.name !== '未登录') {
-          this.goTo('/pages/profile/fillUserInfo');
+          this.goToAuth('/pages/profile/fillUserInfo');
         } else {
           this.goTo('/pages/login/login');
         }
@@ -440,41 +441,54 @@
     margin-top: 8rpx;
   }
   .profile-logout-btn {
+    @extend .btn;
     width: 100%;
     margin: 24rpx 0 0 0;
-    background: #fff;
+    background: transparent;
     color: #ff4d4f;
-    border-radius: 20rpx;
-    font-size: 32rpx;
-    font-weight: normal;
-    height: 96rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border: 2rpx solid rgba(255, 77, 79, 0.35);
-    box-shadow: none;
-    transition: background 0.2s;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: $charging-shadow-sm;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      background: rgba(255, 77, 79, 0.06);
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
   }
-  .profile-logout-btn:active {
-    background: rgba(255, 77, 79, 0.06);
-  }
+  
   .profile-login-btn {
+    @extend .btn;
     width: 100%;
     margin: 24rpx 0 0 0;
-    background: $charging-gradient-primary;
-    color: #fff;
-    border-radius: 20rpx;
-    font-size: 32rpx;
-    font-weight: normal;
-    height: 96rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
     box-shadow: $charging-shadow-sm;
-    transition: background 0.2s;
-  }
-  .profile-login-btn:active {
-    background: $main-color-dark;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
   }
 </style>

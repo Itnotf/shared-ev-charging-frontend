@@ -100,6 +100,16 @@ export const redirectToLogin = (message = '请先登录') => {
   }, 1000);
 };
 
+// 受保护跳转：未登录直接去登录页，已登录正常跳转
+export const goToAuth = (url, tip = '请先登录') => {
+  const token = uni.getStorageSync('token');
+  if (!token) {
+    redirectToLogin(tip);
+    return;
+  }
+  goTo(url);
+};
+
 // 获取星期几
 export const getWeekday = (dateStr) => {
   const weekMap = ['日', '一', '二', '三', '四', '五', '六'];

@@ -17,6 +17,12 @@
             <text class="info-label">时段：</text>
             <text class="info-value">{{ getTimeslotLabel(record.timeslot) }}</text>
           </view>
+          <view class="info-row" v-if="record.license_plate">
+            <text class="info-label">车牌号：</text>
+            <view class="license-plate-display">
+              <text class="license-plate-text">{{ record.license_plate.plate_number }}</text>
+            </view>
+          </view>
           <view class="info-row">
             <text class="info-label">原度数：</text>
             <text class="info-value">{{ record.kwh }} kWh</text>
@@ -329,6 +335,19 @@
     font-weight: 500;
   }
 
+  .license-plate-display {
+    background-color: $uni-bg-color-grey;
+    border-radius: 8rpx;
+    padding: 8rpx 12rpx;
+    display: inline-block;
+  }
+
+  .license-plate-text {
+    font-size: 28rpx;
+    color: $text-main;
+    font-weight: 500;
+  }
+
   .card {
     background: $white;
     border-radius: 20rpx;
@@ -435,32 +454,41 @@
   }
 
   .submit-btn {
-    background: linear-gradient(90deg, $uni-color-primary 0%, #ffb84d 100%);
-    color: $uni-text-color-inverse;
-    border: none;
-    border-radius: $uni-border-radius-base;
-    font-size: $uni-font-size-lg;
-    font-weight: bold;
-    padding: $uni-spacing-col-base 0;
+    @extend .btn;
+    width: 100%;
     margin-top: $uni-spacing-col-base;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
     box-shadow: $charging-shadow-sm;
-    transition: opacity 0.2s;
-  }
-
-  .submit-btn:active {
-    opacity: 0.8;
-  }
-
-  .submit-btn[disabled] {
-    background: $uni-text-color-disable;
-    opacity: 0.6;
-  }
-
-  .btn-text {
-    margin-left: 10rpx;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
+    
+    // 禁用状态
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      background-color: $uni-text-color-disable;
+      
+      &:hover {
+        transform: none;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      }
+    }
   }
 
   // 图标样式类

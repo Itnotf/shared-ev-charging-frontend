@@ -75,12 +75,6 @@
     },
     methods: {
       goTo,
-      goBack() {
-        // 直接跳转到首页
-        uni.switchTab({
-          url: '/pages/index/index',
-        });
-      },
       skipLogin() {
         uni.showModal({
           title: '提示',
@@ -178,51 +172,14 @@
   }
 
   /* 导航栏样式 */
-  .nav-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 88rpx;
-    background: $uni-bg-color;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30rpx;
-    z-index: 1000;
-    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
-    color: $uni-text-color;
-  }
-
-  .nav-left {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    color: $uni-text-color;
-  }
-
-  .nav-text {
-    font-size: 28rpx;
-    color: $uni-text-color;
-    margin-left: 10rpx;
-  }
-
-  .nav-title {
-    font-size: 32rpx;
-    font-weight: bold;
-    color: $uni-text-color;
-  }
-
-  .nav-right {
-    width: 80rpx;
-  }
+  .nav-bar, .nav-left, .nav-text, .nav-title, .nav-right { display: none; }
 
   .center-area {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin-top: 120rpx;
+    margin-top: 10vh;
     justify-content: center;
     flex: 1;
   }

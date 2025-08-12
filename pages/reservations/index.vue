@@ -1297,13 +1297,8 @@
   // 确认按钮样式优化
   .confirm-btn {
     width: 100%;
-    max-width: 500rpx;
-    @include btn-primary;
-    height: 80rpx;
-    padding: 0 40rpx;
-    font-size: 32rpx;
+    @extend .btn;
     font-weight: 600;
-    border-radius: 40rpx;
     transition: all 0.2s ease;
     box-shadow: $charging-shadow-sm;
     letter-spacing: 1rpx;
@@ -1339,24 +1334,25 @@
   // 取消按钮样式优化
   .cancel-btn {
     width: 100%;
-    max-width: 500rpx;
-    background: $uni-bg-color;
-    color: $main-color-dark;
-    border: 2rpx solid $main-color-dark;
+    height: 80rpx;
+    background: transparent;
+    border: 2rpx solid $uni-border-color;
     border-radius: 40rpx;
     font-size: 32rpx;
     font-weight: 600;
-    height: 80rpx;
     padding: 0 40rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s ease;
     box-shadow: $charging-shadow-sm;
     letter-spacing: 1rpx;
     cursor: pointer;
+    color: $uni-text-color;
     
     // 悬停效果
     &:hover {
-      background: $main-color-dark;
-      color: $uni-text-color-inverse;
+      background: $uni-bg-color-grey;
       box-shadow: $charging-shadow-md;
       transform: translateY(-1rpx);
     }

@@ -13,18 +13,24 @@
         v-if="reservationId || reservationDate || reservationTimeslot"
         class="supplement-reservation-info"
       >
-        <uni-icons type="calendar" size="22" :color="PRIMARY_COLOR" class="calendar-icon" />
-        <text class="supplement-label">本次预约信息：</text>
-        <text class="supplement-date">{{ reservationDate }}</text>
-        <text class="supplement-timeslot" v-if="reservationTimeslot">
-          （{{
-            reservationTimeslot === 'day'
-              ? TIMESLOTS.day.name
-              : reservationTimeslot === 'night'
-                ? TIMESLOTS.night.name
-                : reservationTimeslot
-          }}）
-        </text>
+        <view class="reservation-row">
+          <uni-icons type="calendar" size="22" :color="PRIMARY_COLOR" class="calendar-icon" />
+          <text class="supplement-label">本次预约信息：</text>
+          <text class="supplement-date">{{ reservationDate }}</text>
+          <text class="supplement-timeslot" v-if="reservationTimeslot">
+            （{{
+              reservationTimeslot === 'day'
+                ? TIMESLOTS.day.name
+                : reservationTimeslot === 'night'
+                  ? TIMESLOTS.night.name
+                  : reservationTimeslot
+            }}）
+          </text>
+        </view>
+        <view class="license-plate-row" v-if="reservationLicensePlate">
+          <uni-icons type="car" size="18" :color="PRIMARY_COLOR" class="car-icon" />
+          <text class="license-plate-text">{{ reservationLicensePlate }}</text>
+        </view>
       </view>
       <!-- 照片上传 -->
       <view class="card">
@@ -40,14 +46,6 @@
             <text class="upload-text">点击上传电量截图</text>
           </block>
         </view>
-      </view>
-
-      <!-- 车牌号选择 -->
-      <view class="card">
-        <view class="card-header">
-          <text class="card-title">选择车牌号</text>
-        </view>
-        <LicensePlateSelector v-model="selectedLicensePlate" @change="onLicensePlateChange" />
       </view>
 
       <!-- 电量输入 -->
@@ -84,7 +82,7 @@
       <button
         class="submit-btn"
         @click="submitRecord"
-        :disabled="!reservationId || !kwh || parseFloat(kwh) <= 0 || !selectedLicensePlate"
+        :disabled="!reservationId || !kwh || parseFloat(kwh) <= 0 || !reservationLicensePlateId"
       >
         <uni-icons type="wallet" size="20" class="wallet-icon"></uni-icons>
         <text class="btn-text">提交记录 ¥{{ cost }}</text>
@@ -125,6 +123,7 @@
     // calculateAmount, // 未使用，已注释
     getStatusStyle,
     goTo,
+    goToAuth,
     compressImage,
     getPayload,
   } from '@/utils';
@@ -133,11 +132,10 @@
 
   import { getCurrentReservationStatus } from '@/api/reservation';
   import { getUserPrice } from '@/api/auth';
-  import LicensePlateSelector from '@/components/LicensePlateSelector.vue';
 
   export default {
     components: {
-      LicensePlateSelector,
+      // 移除 LicensePlateSelector
     },
     data() {
       return {
@@ -149,11 +147,12 @@
         kwh: '',
         cost: '0.00',
         remark: '',
-        selectedLicensePlate: null,
         recentRecords: [],
         reservationId: '',
         reservationDate: '',
         reservationTimeslot: '',
+        reservationLicensePlate: '', // 新增：存储预约车牌号
+        reservationLicensePlateId: '', // 新增：存储预约车牌号ID
         skipCheck: false,
       };
     },
@@ -186,9 +185,6 @@
       this.loadRecentRecords(); // 每次进入页面都刷新最近记录
     },
     methods: {
-      onLicensePlateChange(licensePlate) {
-        this.selectedLicensePlate = licensePlate;
-      },
       async chooseImage() {
         this.skipCheck = true; // 选择图片时不弹框
         uni.chooseImage({
@@ -264,8 +260,8 @@
           return;
         }
 
-        if (!this.selectedLicensePlate) {
-          uni.showToast({ title: '请选择车牌号', icon: 'none' });
+        if (!this.reservationLicensePlateId) {
+          uni.showToast({ title: '预约车牌号信息缺失', icon: 'none' });
           return;
         }
         uni.showLoading({ title: '提交中' });
@@ -286,7 +282,7 @@
             image_url: imageUrl,
             remark: this.remark,
             reservation_id: this.reservationId, // 始终传递
-            license_plate_id: this.selectedLicensePlate.id,
+            license_plate_id: this.reservationLicensePlateId, // 使用预约车牌号ID
           };
           // 提交 recordData 调试
           await createRecord(recordData);
@@ -298,10 +294,11 @@
           this.kwh = '';
           this.cost = '0.00';
           this.remark = '';
-          this.selectedLicensePlate = null;
           this.reservationId = '';
           this.reservationDate = '';
           this.reservationTimeslot = '';
+          this.reservationLicensePlate = ''; // 清空预约车牌号
+          this.reservationLicensePlateId = ''; // 清空预约车牌号ID
           setTimeout(() => {
             uni.switchTab({ url: '/pages/index/index' });
           }, 1000);
@@ -323,7 +320,7 @@
               confirmText: '去预约',
               showCancel: true,
               success: (r) => {
-                if (r.confirm) goTo('/pages/reservations/index');
+                if (r.confirm) goToAuth('/pages/reservations/index');
               },
             });
             return;
@@ -335,6 +332,24 @@
               ? data.lastReservation.date.slice(0, 10)
               : '';
             this.reservationTimeslot = data.lastReservation.timeslot;
+            // 获取车牌号信息
+            console.log('lastReservation 数据:', data.lastReservation);
+            console.log('lastReservation.license_plate:', data.lastReservation.license_plate);
+            if (data.lastReservation.license_plate) {
+              this.reservationLicensePlate = data.lastReservation.license_plate.plate_number;
+              this.reservationLicensePlateId = data.lastReservation.license_plate.id;
+              console.log('设置车牌号:', this.reservationLicensePlate, 'ID:', this.reservationLicensePlateId);
+            } else if (data.lastReservation.license_plate_id) {
+              // 如果只有ID，尝试获取车牌号信息
+              console.log('只有车牌号ID:', data.lastReservation.license_plate_id);
+              this.reservationLicensePlateId = data.lastReservation.license_plate_id;
+              // 这里可以调用API获取车牌号信息，暂时显示ID
+              this.reservationLicensePlate = `车牌号ID: ${data.lastReservation.license_plate_id}`;
+            } else {
+              this.reservationLicensePlate = '';
+              this.reservationLicensePlateId = '';
+              console.log('lastReservation 中没有车牌号信息');
+            }
             // 继续展示上传表单
             return;
           }
@@ -352,6 +367,14 @@
                     ? data.currentReservation.date.slice(0, 10)
                     : '';
                   this.reservationTimeslot = data.currentReservation.timeslot;
+                  // 获取车牌号信息
+                  if (data.currentReservation.license_plate) {
+                    this.reservationLicensePlate = data.currentReservation.license_plate.plate_number;
+                    this.reservationLicensePlateId = data.currentReservation.license_plate.id;
+                  } else {
+                    this.reservationLicensePlate = '';
+                    this.reservationLicensePlateId = '';
+                  }
                   // 继续展示上传表单
                 } else {
                   // 取消则返回首页或不做处理
@@ -368,7 +391,7 @@
             confirmText: '去预约',
             showCancel: true,
             success: (r) => {
-              if (r.confirm) goTo('/pages/reservations/index');
+              if (r.confirm) goToAuth('/pages/reservations/index');
             },
           });
         } catch (e) {
@@ -486,26 +509,41 @@
   }
 
   .submit-btn {
-    background-color: $uni-color-primary;
-    color: $uni-text-color-inverse;
-    border: none;
-    border-radius: $uni-border-radius-sm;
-    font-size: $uni-font-size-lg;
-    font-weight: bold;
-    padding: $uni-spacing-col-base 0;
+    @extend .btn;
+    width: 100%;
     margin-top: $uni-spacing-col-base;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .submit-btn:active {
-    opacity: 0.8;
-  }
-
-  .submit-btn[disabled] {
-    background-color: $uni-text-color-disable;
-    opacity: 0.6;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: $charging-shadow-sm;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
+    
+    // 禁用状态
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      background-color: $uni-text-color-disable;
+      
+      &:hover {
+        transform: none;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+      }
+    }
   }
 
   .btn-text {
@@ -585,8 +623,8 @@
 
   .supplement-reservation-info {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     background: rgba(255, 165, 0, 0.1);
     border-radius: $uni-border-radius-base;
     margin: 30rpx 0 20rpx 0;
@@ -596,31 +634,59 @@
     box-shadow: $charging-shadow-sm;
   }
 
+  .reservation-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10rpx;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .supplement-label {
-    font-weight: bold;
-    margin-right: 8rpx;
+    font-size: 28rpx;
+    color: $uni-text-color;
+    margin-right: 10rpx;
   }
 
   .supplement-date {
+    font-size: 28rpx;
+    color: $uni-color-primary;
     font-weight: bold;
-    color: $uni-text-color;
+    margin-right: 10rpx;
   }
 
   .supplement-timeslot {
-    margin-left: 4rpx;
+    font-size: 28rpx;
     color: $uni-color-primary;
+    font-weight: bold;
   }
 
-  .record-timeslot-label {
+  .license-plate-row {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border-radius: 16rpx;
+    padding: 8rpx 0;
+    margin-top: 8rpx;
+  }
+
+  .car-icon {
+    margin-right: 8rpx;
+    font-size: 16rpx;
+    color: $uni-color-success;
+  }
+
+  .license-plate-text {
     display: inline-block;
-    margin-left: 10rpx;
-    margin-right: 10rpx;
-    padding: 2rpx 12rpx;
-    background: $uni-color-primary;
-    color: $uni-text-color-inverse;
-    border-radius: $uni-border-radius-base;
-    font-size: 22rpx;
-    vertical-align: middle;
+    padding: 6rpx 16rpx;
+    border-radius: 12rpx;
+    background: linear-gradient(135deg, $plate-ev-gradient-start 0%, $plate-ev-gradient-end 100%);
+    color: #111;
+    font-weight: 700;
+    letter-spacing: 2rpx;
+    border: 2rpx solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1) inset;
+    font-size: 28rpx;
   }
 
   .no-reservation-warning {

@@ -86,7 +86,7 @@
 <script>
 
   import { getRecordDetail } from '@/api/record';
-  import { formatDate, getRecordImageUrl, getFullImageUrl, getPayload } from '@/utils';
+  import { formatDate, getFullImageUrl, getRecordImageUrl, goToAuth, getPayload } from '@/utils';
   import { TIMESLOTS } from '@/config';
 
   export default {
@@ -125,14 +125,20 @@
         this.loading = true;
         try {
           const res = await getRecordDetail(this.recordId);
+          console.log('API返回原始数据:', res);
           const data = getPayload(res);
+          console.log('getPayload解析后数据:', data);
           if (data) {
             this.record = {
               ...data,
               amount: Number(data.amount) / 100, // 分转元
             };
+            console.log('最终record数据:', this.record);
+          } else {
+            console.log('getPayload返回空数据');
           }
         } catch (error) {
+          console.error('加载记录详情失败:', error);
           uni.showToast({ title: '加载记录详情失败', icon: 'none' });
         } finally {
           this.loading = false;
@@ -140,9 +146,7 @@
       },
 
       goToEdit() {
-        uni.navigateTo({
-          url: `/pages/records/edit?id=${this.recordId}`,
-        });
+        goToAuth(`/pages/records/edit?id=${this.recordId}`);
       },
 
       previewImage() {
@@ -307,27 +311,26 @@
   }
 
   .edit-btn {
+    @extend .btn;
     width: 100%;
-    background: linear-gradient(90deg, $uni-color-primary 0%, #ffb84d 100%);
-    color: $uni-text-color-inverse;
-    border: none;
-    border-radius: $uni-border-radius-base;
-    font-size: $uni-font-size-lg;
-    font-weight: bold;
-    padding: $uni-spacing-col-base 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
     box-shadow: $charging-shadow-sm;
-    transition: opacity 0.2s;
-  }
-
-  .edit-btn:active {
-    opacity: 0.8;
-  }
-
-  .btn-text {
-    margin-left: 8rpx;
+    letter-spacing: 1rpx;
+    cursor: pointer;
+    
+    // 悬停效果
+    &:hover {
+      box-shadow: $charging-shadow-md;
+      transform: translateY(-1rpx);
+    }
+    
+    // 点击效果
+    &:active {
+      transform: translateY(1rpx) scale(0.98);
+      box-shadow: $charging-shadow-sm;
+      transition: all 0.1s ease;
+    }
   }
 
   // 图标样式类
