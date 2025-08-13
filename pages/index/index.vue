@@ -12,7 +12,7 @@
       </template>
     </PageHero>
 
-    <PageContent :overlapOffset="24">
+    <PageContent :overlapOffset="16">
       <!-- 内容区域原有内容全部移入此处 -->
       <HeroCard type="overview" cardClass="overview-card high">
         <view class="card-header card-header-flex overview-header">
@@ -99,7 +99,7 @@
         </transition>
       </view>
             <!-- 功能宫格区域 -->
-      <view class="function-section function-section-spaced">
+      <view class="function-section-wrapper">
         <view class="function-grid-new">
           <view
             v-for="item in functionList"
@@ -543,6 +543,7 @@
     justify-content: space-around;
     align-items: center;
     padding: 8rpx 12rpx 16rpx;
+    min-height: 120rpx; // 确保最小高度
   }
 
   .data-item {
@@ -551,6 +552,7 @@
     align-items: center;
     gap: 6rpx;
     flex: 1;
+    min-height: 100rpx; // 确保每个数据项有最小高度
   }
   // 移除图标容器与分隔线（回归简洁）
   .data-icon-wrapper,
@@ -616,39 +618,40 @@
     min-width: 0;
     flex-shrink: 1;
     max-height: 100%;
-    overflow: auto;
-    min-height: 80rpx; /* 确保信息区域有最小高度 */
-    padding: 20rpx 0; /* 添加内边距确保高度一致 */
+    overflow: hidden; // 改为hidden，防止内容溢出
+    min-height: 48rpx; // 进一步减少最小高度，确保适配
+    padding: 6rpx 0; // 进一步减少内边距，节省空间
   }
   
   .reservation-header {
-    margin-bottom: 16rpx; /* 增加头部间距 */
-    min-height: 48rpx; /* 确保头部有固定高度 */
+    margin-bottom: 6rpx; // 进一步减少头部间距，节省空间
+    min-height: 32rpx; // 进一步减少头部高度，节省空间
   }
   
   .reservation-progress {
-    padding: 0 20rpx 20rpx;
-    margin-top: 16rpx; /* 增加与上方内容的间距 */
-    min-height: 60rpx; /* 确保进度条区域有固定高度 */
+    padding: 6rpx 20rpx 10rpx; // 进一步使用紧凑的内边距
+    margin-top: 2rpx; // 进一步减少与上方内容的间距
+    min-height: 40rpx; // 进一步减少进度条区域高度，确保适配卡片高度
+    border-top: 1rpx solid rgba(0, 0, 0, 0.06); // 保留顶部分隔线
   }
   
   .reservation-detail {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 12rpx; /* 增加间距 */
-    padding-top: 16rpx;
-    min-height: 60rpx; /* 确保详情区域有最小高度 */
+    gap: 4rpx; // 进一步减少间距
+    padding-top: 4rpx; // 进一步减少顶部内边距
+    min-height: 36rpx; // 进一步减少详情区域最小高度
   }
   
   .reservation-meta {
     font-size: 26rpx;
     color: $text-sub;
     display: flex;
-    padding-top: 16rpx;
+    padding-top: 4rpx; // 进一步减少顶部内边距
     gap: 16rpx;
-    align-items: center; /* 确保对齐 */
-    min-height: 40rpx; /* 确保元数据区域有固定高度 */
+    align-items: center;
+    min-height: 24rpx; // 进一步减少元数据区域高度
   }
   .status-badge {
     font-size: 22rpx;
@@ -671,8 +674,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12rpx;
-    font-size: 24rpx;
+    margin-bottom: 4rpx; // 进一步减少底部间距
+    font-size: 20rpx; // 进一步减少字体大小
     color: $text-sub;
   }
   .progress-time {
@@ -685,9 +688,9 @@
   }
   .progress-bar {
     width: 100%;
-    height: 12rpx;
+    height: 5rpx; // 进一步减少进度条高度
     background: rgba(0, 0, 0, 0.06);
-    border-radius: 12rpx;
+    border-radius: 5rpx; // 调整圆角
     overflow: hidden;
   }
   .progress-bar-fill {
@@ -768,8 +771,8 @@
     box-shadow: $charging-shadow-md;
   }
   .empty-reservation-card {
-    height: 280rpx; /* 固定高度，与有预约的卡片保持一致 */
-    min-height: 280rpx; /* 确保最小高度一致 */
+    height: 200rpx; /* 使用合理的固定高度 */
+    min-height: 200rpx; /* 确保最小高度一致 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -781,17 +784,18 @@
   }
   
   .reservation-card {
-    height: 280rpx; /* 固定高度，与无预约的卡片保持一致 */
-    min-height: 280rpx; /* 确保最小高度一致 */
+    height: 200rpx; /* 使用合理的固定高度，与无预约的卡片保持一致 */
+    min-height: 200rpx; /* 确保最小高度一致 */
     transition: all 0.3s ease; /* 添加平滑过渡 */
   }
   
   .reservation-container {
-    height: 320rpx; /* 固定容器高度，包含卡片和间距 */
-    min-height: 320rpx; /* 确保最小高度一致 */
+    height: 240rpx; /* 使用合理的固定高度，包含卡片和间距 */
+    min-height: 240rpx; /* 确保最小高度一致 */
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease; /* 添加平滑过渡 */
+    margin-bottom: 20rpx; /* 减少底部外边距 */
   }
   
   .empty-reservation {
@@ -848,22 +852,20 @@
     font-size: 22rpx;
     margin-left: 8rpx;
   }
-  // 功能区域样式（简洁化）
-  .function-section {
-    margin-top: 32rpx; // 增加与预约卡片的间距，确保布局稳定
-  }
 
-  .function-section-spaced {
-    padding-bottom: 8rpx;
+  .function-section-wrapper {
+    margin-top: 8rpx; // 减少顶部间距
+    padding-top: 8rpx; // 减少内边距
+    // 移除分隔线
   }
 
   .function-grid-new {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24rpx; // 上下列间距略小
-    margin-top: 8rpx;
+    margin-top: 8rpx; // 减少顶部间距
     margin-bottom: 0;
-    min-height: 240rpx;
+    min-height: 280rpx; // 增加grid高度
     height: auto;
   }
   .function-item-new {
@@ -874,7 +876,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 176rpx; // 更高一点
+    min-height: 200rpx; // 增加每个功能项的高度
     padding: 32rpx 0 24rpx 0;
     transition: box-shadow 0.2s, transform 0.2s;
     cursor: pointer;
@@ -930,15 +932,40 @@
 
   @media (min-height: 700px) {
     .overview-card {
-      height: 22vh;
-      max-height: 420rpx;
+      height: 20vh; // 减少高度，避免太空旷
+      max-height: 380rpx;
     }
     .overview-card .overview-data {
       gap: 60rpx;
     }
     .reservation-card,
     .empty-reservation-card {
-      height: 22vh; // 更高一点
+      height: 200rpx; // 保持固定高度
+      min-height: 200rpx;
+    }
+  }
+
+  @media (max-height: 600px) {
+    // 小屏幕高度适配
+    .overview-card {
+      height: 18vh;
+      max-height: 320rpx;
+    }
+    .reservation-card,
+    .empty-reservation-card {
+      height: 180rpx; // 使用更紧凑的高度
+      min-height: 180rpx;
+    }
+    .reservation-container {
+      height: 220rpx; // 使用更紧凑的容器高度
+      min-height: 220rpx;
+    }
+    .function-grid-new {
+      min-height: 240rpx;
+    }
+    .function-item-new {
+      min-height: 180rpx;
+      padding: 24rpx 0 20rpx 0;
     }
   }
   // 按钮active反馈
@@ -991,5 +1018,45 @@
   .reservation-fade-leave-from {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  // 通用响应式优化
+  @media (max-width: 375px) {
+    // 超小屏幕优化
+    .overview-card {
+      height: auto;
+      min-height: 200rpx;
+    }
+    .reservation-container {
+      height: 220rpx; // 使用紧凑的容器高度
+      min-height: 220rpx;
+    }
+  }
+
+  @media (min-width: 414px) {
+    // 大屏幕优化
+    .overview-card {
+      height: auto;
+      min-height: 240rpx;
+    }
+    .reservation-container {
+      height: 240rpx; // 保持标准容器高度
+      min-height: 240rpx;
+    }
+  }
+
+  // 横屏适配
+  @media (orientation: landscape) and (max-height: 500px) {
+    .overview-card {
+      height: auto;
+      min-height: 180rpx;
+    }
+    .reservation-container {
+      height: 200rpx; // 使用紧凑的容器高度
+      min-height: 200rpx;
+    }
+    .function-grid-new {
+      min-height: 220rpx;
+    }
   }
 </style>
