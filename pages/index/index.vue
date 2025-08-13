@@ -52,12 +52,12 @@
             cardClass="reservation-card high"
             key="with-reservation"
           >
-            <view class="card-header reservation-header" @click="goToReservationPage">
+            <view class="card-header reservation-header" @click="handleReservationClick">
               <text class="card-title">当前预约</text>
               <text class="status-badge" :class="reservationStatusClass">{{ reservationStatusText }}</text>
             </view>
             <view class="reservation-info">
-              <view class="reservation-info-main" @click="goToReservationPage">
+              <view class="reservation-info-main" @click="handleReservationClick">
                 <image
                   v-if="currentReservation.user_avatar"
                   :src="getAvatarUrl(currentReservation.user_avatar)"
@@ -76,7 +76,7 @@
                   </view>
                 </view>
               </view>
-              <button class="cancel-reservation-btn" @click.stop="cancelCurrentReservation">
+              <button class="cancel-reservation-btn" @click.stop="handleCancelReservation">
                 取消预约
               </button>
             </view>
@@ -166,28 +166,28 @@
             icon: 'calendar',
             bgClass: 'bg-soft-1',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goToAuth('/pages/reservations/index'),
+            onClick: () => this.handleFunctionClick('/pages/reservations/index', '充电预约'),
           },
           {
             title: '电量上传',
             icon: 'camera',
             bgClass: 'bg-soft-2',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goToAuth('/pages/records/create'),
+            onClick: () => this.handleFunctionClick('/pages/records/create', '电量上传'),
           },
           {
             title: '充电记录',
             icon: 'list',
             bgClass: 'bg-soft-3',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goToAuth(`/pages/records/list?month=${this.selectedMonth}`),
+            onClick: () => this.handleFunctionClick(`/pages/records/list?month=${this.selectedMonth}`, '充电记录'),
           },
           {
             title: '电量分析',
             icon: 'compose',
             bgClass: 'bg-soft-4',
             iconColor: PRIMARY_COLOR,
-            onClick: () => goToAuth(`/pages/records/index?month=${this.selectedMonth}`),
+            onClick: () => this.handleFunctionClick(`/pages/records/index?month=${this.selectedMonth}`, '电量分析'),
           },
         ],
       };
@@ -423,6 +423,81 @@
         // 这里可以调用一个API来同步用户信息
       },
       getAvatarUrl,
+      handleFunctionClick(url, title) {
+        // 检查是否已登录
+        const token = uni.getStorageSync('token');
+        if (!token) {
+          // 未登录时，显示功能预览和登录提示
+          this.showFunctionPreview(title, url);
+        } else {
+          // 已登录时，直接跳转
+          goTo(url);
+        }
+      },
+      
+      // 显示功能预览和登录提示
+      showFunctionPreview(title, url) {
+        uni.showModal({
+          title: `${title}功能预览`,
+          content: `体验${title}功能需要登录账号。您可以先了解功能，再决定是否登录使用。`,
+          confirmText: '立即登录',
+          cancelText: '继续浏览',
+          success: (res) => {
+            if (res.confirm) {
+              // 用户选择登录
+              uni.navigateTo({ url: '/pages/login/login' });
+            } else {
+              // 用户选择继续浏览，可以显示功能说明
+              this.showFunctionDescription(title);
+            }
+          }
+        });
+      },
+      
+      // 显示功能说明
+      showFunctionDescription(title) {
+        const descriptions = {
+          '充电预约': '选择充电日期和时段，预约充电桩使用时间。支持日间和夜间不同时段选择。',
+          '电量上传': '上传充电截图，填写用电量，系统自动计算费用。支持备注和关联预约。',
+          '充电记录': '查看历史充电记录，包括用电量、费用、时间等详细信息。',
+          '电量分析': '分析用电趋势，查看日/夜用电分布，帮助了解充电习惯。'
+        };
+        
+        uni.showModal({
+          title: `${title}功能说明`,
+          content: descriptions[title] || '该功能正在完善中，敬请期待！',
+          showCancel: false,
+          confirmText: '知道了'
+        });
+      },
+      handleReservationClick() {
+        const token = uni.getStorageSync('token');
+        if (token) {
+          this.goToReservationPage();
+        } else {
+          this.showFunctionPreview('充电预约', '/pages/reservations/index');
+        }
+      },
+      
+      // 处理取消预约
+      handleCancelReservation() {
+        const token = uni.getStorageSync('token');
+        if (token) {
+          this.cancelCurrentReservation();
+        } else {
+          uni.showModal({
+            title: '功能提示',
+            content: '取消预约需要登录账号。您可以先了解功能，再决定是否登录使用。',
+            confirmText: '立即登录',
+            cancelText: '继续浏览',
+            success: (res) => {
+              if (res.confirm) {
+                uni.navigateTo({ url: '/pages/login/login' });
+              }
+            }
+          });
+        }
+      },
     },
   };
   // 预约卡片、宫格区块、数据区块建议抽成独立组件，便于复用
